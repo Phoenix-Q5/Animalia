@@ -1,0 +1,68 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  height: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.search-input {
+  margin: 20px;
+  padding: 10px;
+  width: 300px;
+  font-size: 16px;
+  
+}
+
+.animal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px auto;
+  padding: 20px;
+  width: 80%;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  position: relative;
+}
+
+.animal-info {
+  text-align: left;
+  flex: 1;
+  padding-right: 20px; 
+}
+
+.animal-image {
+  padding-left: 20px;
+}
+
+.animal-image img {
+  width: 500px;
+  height: 300px;
+  border-radius: 10%;
+}
+
+.vertical-line {
+  position: absolute;
+  top: 10%;
+  bottom: 10%;
+  left: 50%;
+  border-left: 1px solid #ccc;
+}
+
+.animal:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.3);
+}
+
+.add-animal {
+  position: absolute; 
+  top: 100px; 
+  right: 10px; 
+  padding-right: 10px;
+}

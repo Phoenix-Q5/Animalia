@@ -12,8 +12,8 @@ public class OpenAPIConfiguration {
 
     @Bean
     public OpenAPI exposeAPI(){
-        return new OpenAPI().info(new Info().title("The Animalia").description("API for Animals Application").version("v1")
+        return new OpenAPI().info(new Info().title("The Animalia").description("API built for Animals").version("v1")
                 .license(new License().name("Apache License Version 2.0").url("http://phoenixdrone.net"))).externalDocs(new ExternalDocumentation()
-                .description("Phoenix Aero Drone").url("https://phoenixaerodrone.wordpress.com"));
+                .description("Animalia").url("https://phoenixaerodrone.wordpress.com"));
     }
 }

@@ -1,12 +1,14 @@
 package com.animal.java.dao;
 
-import com.animal.java.model.User;
+import com.animal.java.model.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsername(String username);
+public interface ImageRepository extends JpaRepository<Image, Long> {
+    Optional<Image> findById(Long id);
+
 }
