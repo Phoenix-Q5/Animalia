@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 
 function AnimalForm() {
     const [animal, setAnimal] = useState({
-        breed: '',
-        earTag: '',
+        phylum: '',
+        family: '',
         name: '',
         description: '',
-        age: 0,
-        weight: 0,
+        genus: '',
+        species: '',
         image: null
     });
 
@@ -34,7 +35,7 @@ function AnimalForm() {
         formData.append('animal', new Blob([JSON.stringify(animal)], { type: "application/json" }));
         formData.append('image', animal.image);
 
-        fetch('http://localhost:8080/api/v1/animals/addCompleteAnimal', {
+        fetch('/api/v1/animals/addCompleteAnimal', {
             method: 'POST',
             body: formData
         })
@@ -42,12 +43,12 @@ function AnimalForm() {
             .then(data => {
                 console.log('Animal added:', data);
                 setAnimal({
-                    breed: '',
-                    earTag: '',
+                    phylum: '',
+                    family: '',
                     name: '',
                     description: '',
-                    age: 0,
-                    weight: 0,
+                    genus: '',
+                    species: '',
                     image: null
                 });
             })
@@ -55,37 +56,47 @@ function AnimalForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label htmlFor="breed">Breed:</label>
-                <input type="text" id="breed" name="breed" value={animal.breed} onChange={handleChange} />
-            </div>
-            <div>
-                <label htmlFor="earTag">Ear Tag:</label>
-                <input type="text" id="earTag" name="earTag" value={animal.earTag} onChange={handleChange} />
-            </div>
-            <div>
-                <label htmlFor="name">Name:</label>
-                <input type="text" id="name" name="name" value={animal.name} onChange={handleChange} />
-            </div>
-            <div>
-                <label htmlFor="description">Description:</label>
-                <textarea id="description" name="description" value={animal.description} onChange={handleChange} />
-            </div>
-            <div>
-                <label htmlFor="age">Age:</label>
-                <input type="number" id="age" name="age" value={animal.age} onChange={handleChange} />
-            </div>
-            <div>
-                <label htmlFor="weight">Weight:</label>
-                <input type="number" id="weight" name="weight" value={animal.weight} onChange={handleChange} />
-            </div>
-            <div>
-                <label htmlFor="image">Image:</label>
-                <input type="file" id="image" name="image" onChange={handleImageChange} />
-            </div>
-            <button type="submit">Submit</button>
-        </form>
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="animated-background"
+        >
+            <form onSubmit={handleSubmit}>
+                <div className="add-items">
+                    <div className="input-row">
+                        <div className="input-text">
+                            <input type="text" id="phylum" name="phylum" placeholder="Phylum" value={animal.phylum} onChange={handleChange} />
+                        </div>
+                        <div className="input-text">
+                            <input type="text" id="family" name="family" placeholder="Family" value={animal.family} onChange={handleChange} />
+                        </div>
+                        <div className="input-text">
+                            <input type="text" id="name" name="name" placeholder="Name" value={animal.name} onChange={handleChange} />
+                        </div>
+                    </div>
+                    <div className="input-row">
+                        <div className="input-text">
+                            <textarea id="description" name="description" placeholder="Description" value={animal.description} onChange={handleChange}></textarea>
+                        </div>
+                        <div className="input-text">
+                            <input type="text" id="genus" name="genus" placeholder="Genus" value={animal.genus} onChange={handleChange} />
+                        </div>
+                        <div className="input-text">
+                            <input type="text" id="species" name="species" placeholder="Species" value={animal.species} onChange={handleChange} />
+                        </div>
+                    </div>
+                    <div className="input-row">
+                        <div className="file-input">
+                            <label htmlFor="image">Animal Image:</label>
+                            <input type="file" id="image" name="image" onChange={handleImageChange} />
+                        </div>
+                    </div>
+                    <button className="button" type="submit">Submit</button>
+                    <button className="button" onClick={() => window.location.href = '/'}>Exit</button>
+                </div>
+            </form>
+        </motion.div>
     );
 }
 

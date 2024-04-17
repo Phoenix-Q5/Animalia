@@ -1,4 +1,4 @@
 package com.animal.java.model;
 
-public class StaticConstants {
+public class Bird extends Animal{
 }

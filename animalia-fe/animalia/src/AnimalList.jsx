@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SearchBar from './SearchBar';
 import * as PropTypes from "prop-types";
+import { motion } from 'framer-motion';
 
 SearchBar.propTypes = {onSearch: PropTypes.func};
 
@@ -9,7 +10,7 @@ function AnimalList() {
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/v1/animals/getAllAnimals')
+        fetch('/api/v1/animals/getAllAnimals')
             .then(response => response.json())
             .then(data => setAnimals(data))
             .catch(error => console.error('Error fetching data: ', error));
@@ -21,27 +22,33 @@ function AnimalList() {
 
     const filteredAnimals = animals.filter(animal =>
         animal.name.toLowerCase().includes(searchTerm) ||
-        animal.breed.toLowerCase().includes(searchTerm) ||
-        animal.earTag?.toLowerCase().includes(searchTerm) ||
+        animal.phylum.toLowerCase().includes(searchTerm) ||
+        animal.family?.toLowerCase().includes(searchTerm) ||
         animal.id.toString().includes(searchTerm) ||
-        animal.age.toString().includes(searchTerm) ||
-        animal.weight.toString().includes(searchTerm)
+        animal.genus.toLowerCase().includes(searchTerm) ||
+        animal.species.toLowerCase().includes(searchTerm)
       );
     
       return (
+
+        // <div className="video-background">
+        // <video autoPlay="autoplay" loop="loop" muted defaultMuted playsInline className="video-element">
+        //   <source src="P1470355.mp4" type="video/mp4" />
+        //   Your browser does not support the video tag.
+        // </video>
         <div>
           <SearchBar onSearch={handleSearch} />
           {filteredAnimals.map(animal => (
             <div key={animal.id} className="animal">
               <div className="animal-info">
                 <h3><strong>Name:</strong> {animal.name}</h3>
-                <p><strong>Breed:</strong> {animal.breed}</p>
-                <p><strong>Ear Tag:</strong> {animal.earTag}</p>
-                <p><strong>Description:</strong> {animal.description}</p>
-                <p><strong>Age:</strong> {animal.age}</p>
-                <p><strong>Weight:</strong> {animal.weight} kg</p>
+                <p><strong>Phylum:</strong> {animal.phylum}</p>
+                <p><strong>Family:</strong> {animal.family}</p>
+                <p className="animal-description"><strong>Description:</strong> {animal.description}</p>
+                <p><strong>Genus:</strong> {animal.genus}</p>
+                <p><strong>Species:</strong> {animal.species} </p>
               </div>
-              <div className="vertical-line"></div>
+              {/* <div className="vertical-line"></div> */}
               <div className="animal-image">
                 {/* <img src={animal.animalImage} alt={animal.name} /> */}
                 {animal.animalImage && (
@@ -53,6 +60,7 @@ function AnimalList() {
             </div>
           ))}
         </div>
+        // </div>
       );
 }
 
