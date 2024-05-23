@@ -11,4 +11,8 @@ public class UUIDUtils {
     public static String newStringId(){
         return String.valueOf(newID());
     }
+
+    public static boolean isUUID(){
+        return false;
+    }
 }
