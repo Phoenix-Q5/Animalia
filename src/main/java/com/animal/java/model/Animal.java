@@ -9,8 +9,10 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@MappedSuperclass
-public abstract class Animal {
+//@MappedSuperclass
+@Entity
+@Data
+public class Animal {
 
     @Id
     private String id;

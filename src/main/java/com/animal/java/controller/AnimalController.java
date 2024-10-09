@@ -5,6 +5,7 @@ import com.animal.java.model.Image;
 import com.animal.java.service.AnimalService;
 import com.animal.java.service.ImageService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,13 +17,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/animals")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @CrossOrigin("http://localhost:3000")
 public class AnimalController {
 
-    private AnimalService animalService;
+    private final AnimalService animalService;
 
-    private ImageService imageService;
+    private final ImageService imageService;
 
     @GetMapping("/getAllAnimals")
     public List<Animal> getAllAnimals(){

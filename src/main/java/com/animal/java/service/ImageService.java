@@ -1,26 +1,24 @@
 package com.animal.java.service;
 
 import com.animal.java.dao.ImageRepository;
-import com.animal.java.exception.ApplicationException;
+import com.animal.java.exception.AnimaliaException;
 import com.animal.java.model.Image;
-import com.animal.java.utils.ImageUtils;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 import static com.animal.java.utils.ImageUtils.compressImage;
 import static com.animal.java.utils.ImageUtils.decompressImage;
 
 @Service
+@RequiredArgsConstructor
 public class ImageService {
 
-    @Autowired
-    ImageRepository imageRepository;
+    private final ImageRepository imageRepository;
 
     @Transactional
     public Image uploadImage(MultipartFile file){
@@ -31,7 +29,7 @@ public class ImageService {
                     .image(compressImage(file.getBytes())).build());
         }
         catch (IOException e){
-            throw new ApplicationException("Failed to upload image", e);
+            throw new AnimaliaException("Failed to upload image", e);
         }
     }
 
