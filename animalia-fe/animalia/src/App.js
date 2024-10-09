@@ -28,5 +28,6 @@ function App() {
     </Router>
   );
 }
+// Do something - removed
 
 export default App;
