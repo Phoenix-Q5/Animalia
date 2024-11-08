@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import SearchBar from './SearchBar';
 import * as PropTypes from "prop-types";
-import { motion } from 'framer-motion';
 
 SearchBar.propTypes = {onSearch: PropTypes.func};
 
 function AnimalList() {
     const [animals, setAnimals] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedAnimal, setSelectedAnimal] = useState(null);
 
     useEffect(() => {
         fetch('/api/v1/animals/getAllAnimals')
@@ -30,12 +30,6 @@ function AnimalList() {
       );
     
       return (
-
-        // <div className="video-background">
-        // <video autoPlay="autoplay" loop="loop" muted defaultMuted playsInline className="video-element">
-        //   <source src="P1470355.mp4" type="video/mp4" />
-        //   Your browser does not support the video tag.
-        // </video>
         <div>
           <SearchBar onSearch={handleSearch} />
           {filteredAnimals.map(animal => (
@@ -48,9 +42,7 @@ function AnimalList() {
                 <p><strong>Genus:</strong> {animal.genus}</p>
                 <p><strong>Species:</strong> {animal.species} </p>
               </div>
-              {/* <div className="vertical-line"></div> */}
               <div className="animal-image">
-                {/* <img src={animal.animalImage} alt={animal.name} /> */}
                 {animal.animalImage && (
                   <img src={`data:${animal.animalImage.type};base64,${animal.animalImage.image}`} 
                   alt={animal.name}
@@ -60,7 +52,6 @@ function AnimalList() {
             </div>
           ))}
         </div>
-        // </div>
       );
 }
 

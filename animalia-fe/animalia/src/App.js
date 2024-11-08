@@ -1,33 +1,37 @@
 import './App.css';
-import React from 'react';
+import React, {useState} from 'react';
 import AnimalList from './AnimalList';
 import AddAnimal from "./AddAnimal";
 import { BrowserRouter as Router, Link, Route, Routes, NavLink } from 'react-router-dom';
+import Header from "./Header";
+import MainContent from "./MainContent";
+import AnimalCard from "./AnimalCard";
+import AllAnimals from "./AllAnimals";
+import AnimalDetails from "./AnimalDetails";
 
 function App() {
-
+  const [selectedAnimal, setSelectedAnimal] = useState(null);
   return (
     <Router>
       <div className="App">
-        <header className="App-header">
-          <h1>Animalia</h1>
-        </header>
+        <Header />
         <main>
-          <NavLink
-            to="/add-animal"
-            className={({ isActive }) => (isActive ? "hidden" : "add-animal")}
-          >
-            Add Animal
-          </NavLink>
+          {/* <MainContent /> */}
           <Routes>
+            <Route
+            path="/all-animals" element={<AllAnimals setSelectedAnimal={setSelectedAnimal} />}
+            />
+            <Route
+            path="/animal-details/:id" element={<AnimalDetails selectedAnimal={selectedAnimal}/>}
+            />
             <Route path="/add-animal" element={<AddAnimal />} />
-            <Route path="/" element={<AnimalList />} />
+            {/* <Route path="/" element={<AnimalList />} /> */}
           </Routes>
+
         </main>
       </div>
     </Router>
   );
 }
-// Do something - removed
 
 export default App;

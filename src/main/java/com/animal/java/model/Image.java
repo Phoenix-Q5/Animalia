@@ -5,7 +5,7 @@ import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-@Entity
+
 @Getter
 @Setter
 @Builder
@@ -13,17 +13,13 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @AllArgsConstructor
 public class Image {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
     private String type;
 
-    @Lob
-    @Column(name = "image", length = 1000)
-    private byte[] image;
+    private byte[] imageArray;
 
     public Image(String name){
         this.name = name;

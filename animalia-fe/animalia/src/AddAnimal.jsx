@@ -9,6 +9,7 @@ function AnimalForm() {
         description: '',
         genus: '',
         species: '',
+        scientificName: '',
         image: null
     });
 
@@ -49,6 +50,7 @@ function AnimalForm() {
                     description: '',
                     genus: '',
                     species: '',
+                    scientificName: '',
                     image: null
                 });
             })
@@ -73,6 +75,9 @@ function AnimalForm() {
                         </div>
                         <div className="input-text">
                             <input type="text" id="name" name="name" placeholder="Name" value={animal.name} onChange={handleChange} />
+                        </div>
+                        <div className="input-text">
+                            <input type="text" id="name" name="scientificName" placeholder="Scientific Name" value={animal.scientificName} onChange={handleChange} />
                         </div>
                     </div>
                     <div className="input-row">

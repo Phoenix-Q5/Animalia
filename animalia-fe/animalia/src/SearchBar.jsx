@@ -1,12 +1,20 @@
+
+
 function SearchBar({ onSearch }) {
     return (
-        <input
-            type="text"
-            placeholder="Search by name, genus, phylum, etc..."
-            onChange={e => onSearch(e.target.value)}
-            className="search-input"
-        />
+
+        <aside className="sidebar">
+            {/*<AnimalCard*/}
+            {/*    title="Animal of the Day"*/}
+            {/*    imageUrl="orange-spider.jpg"*/}
+            {/*    description="Orange spiders make vertically-oriented webs for catching prey."*/}
+            {/*/>*/}
+            {/*<AnimalCard*/}
+            {/*    title="Trending on A-Z Animals"*/}
+            {/*    imageUrl="irish-dog.jpg"*/}
+            {/*    description="The 77 Best Irish Dog Names Female and Their Meanings"*/}
+            {/*/>*/}
+           </aside>
     );
 }
-
 export default SearchBar;

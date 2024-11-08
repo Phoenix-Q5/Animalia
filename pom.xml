@@ -67,6 +67,18 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.retry</groupId>
+			<artifactId>spring-retry</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>6.1.4.Final</version>
@@ -90,6 +102,22 @@
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq</artifactId>
+			<version>3.19.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-meta</artifactId>
+			<version>3.19.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-codegen</artifactId>
+			<version>3.19.7</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>5.8.0</version>
@@ -99,6 +127,16 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
 			<version>4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>1.6.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.assertj</groupId>
@@ -129,6 +167,51 @@
 			<plugin>
 				<groupId>pl.project13.maven</groupId>
 				<artifactId>git-commit-id-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.jooq</groupId>
+				<artifactId>jooq-codegen-maven</artifactId>
+				<version>${jooq.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<jdbc>
+						<driver>org.postgresql.Driver</driver>
+						<url>jdbc:postgresql://localhost:5432/animal</url>
+						<user>super</user>
+						<password>secret</password>
+					</jdbc>
+					<generator>
+						<name>org.jooq.codegen.JavaGenerator</name>
+						<strategy>
+							<name>org.jooq.codegen.example.JPrefixGeneratorStrategy</name>
+						</strategy>
+						<database>
+							<name>org.jooq.meta.postgres.PostgresDatabase</name>
+							<inputSchema>animal</inputSchema>
+						</database>
+						<target>
+							<packageName>com.animal.jooq.generated</packageName>
+							<directory>src/main/java</directory>
+						</target>
+						<generate>
+							<pojos>true</pojos>
+							<daos>true</daos>
+							<relations>true</relations>
+							<records>true</records>
+							<validationAnnotations>true</validationAnnotations>
+							<javaTimeTypes>false</javaTimeTypes>
+							<deprecated>false</deprecated>
+							<immutablePojos>false</immutablePojos>
+							<fluentSetters>false</fluentSetters>
+						</generate>
+					</generator>
+				</configuration>
 			</plugin>
 		</plugins>
 		<finalName>animalia</finalName>

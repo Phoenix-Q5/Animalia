@@ -9,12 +9,11 @@ import java.util.Objects;
 
 @Getter
 @Setter
-//@MappedSuperclass
-@Entity
-@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Animal {
 
-    @Id
     private String id;
 
     private String phylum;
@@ -31,8 +30,6 @@ public class Animal {
 
     private String species;
 
-    @OneToOne
-    @JoinColumn(name = "image_id")
     private Image animalImage;
 
     @Override

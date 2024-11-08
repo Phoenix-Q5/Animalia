@@ -1,4 +1,4 @@
-package com.animal.java.service;
+package com.animal.java.service.impl;
 
 import com.animal.java.model.Animal;
 import jakarta.persistence.criteria.Predicate;

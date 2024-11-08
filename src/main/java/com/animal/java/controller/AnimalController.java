@@ -1,12 +1,11 @@
 package com.animal.java.controller;
 
+import com.animal.java.dto.AnimalFull;
 import com.animal.java.model.Animal;
 import com.animal.java.model.Image;
 import com.animal.java.service.AnimalService;
 import com.animal.java.service.ImageService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/animals")
@@ -51,6 +51,16 @@ public class AnimalController {
                 .body(image);
     }
 
+    @GetMapping("/getById/{id}")
+    public Animal getAnimalById(@PathVariable("id") String id){
+        return animalService.getAnimalById(id);
+    }
+
+    @GetMapping("/getByName/{name}")
+    public List<Animal> getAnimalsByName(@PathVariable("name") String name){
+        return animalService.getAnimalByName(name);
+    }
+
     @PostMapping("/addImage")
     public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) {
         Image response = imageService.uploadImage(file);
@@ -59,8 +69,8 @@ public class AnimalController {
                 .body(response);
     }
 
-    @GetMapping("/searchAnimals")
-    public List<Animal> getAnimals(@RequestParam(value = "search", required = false) String smartSearch){
-        return animalService.smartAnimalSearch(smartSearch);
-    }
+//    @GetMapping("/searchAnimals")
+//    public List<Animal> getAnimals(@RequestParam(value = "search", required = false) String smartSearch){
+//        return animalService.smartAnimalSearch(smartSearch);
+//    }
 }

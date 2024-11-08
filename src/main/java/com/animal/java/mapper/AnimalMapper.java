@@ -1,0 +1,118 @@
+package com.animal.java.mapper;
+
+import com.animal.java.model.Animal;
+import com.animal.java.model.Image;
+import com.animal.jooq.generated.tables.pojos.JAnimal;
+import com.animal.jooq.generated.tables.pojos.JImage;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static com.animal.java.utils.ByteUtils.longToBytes;
+import static com.animal.java.utils.ImageUtils.decompressImage;
+
+@Component
+public class AnimalMapper {
+
+    public Animal fromJooq(JAnimal jAnimal) {
+        if (Objects.isNull(jAnimal)) {
+            return null;
+        }
+
+        return new Animal().builder()
+                .id(jAnimal.getId())
+                .name(jAnimal.getName())
+                .genus(jAnimal.getGenus())
+                .description(jAnimal.getDescription())
+                .family(jAnimal.getFamily())
+                .phylum(jAnimal.getPhylum())
+                .scientificName(jAnimal.getScientificName())
+                .species(jAnimal.getSpecies())
+                .build();
+    }
+
+    public List<Animal> fromJooqAnimals(List<JAnimal> animals) {
+        return animals.stream().map(this::fromJooq).collect(Collectors.toList());
+    }
+
+    public JAnimal toJooq(Animal animal) {
+        JAnimal jAnimal = new JAnimal();
+        jAnimal.setDescription(animal.getDescription());
+        jAnimal.setId(animal.getId());
+        jAnimal.setFamily(animal.getFamily());
+        jAnimal.setName(animal.getName());
+        jAnimal.setGenus(animal.getGenus());
+        jAnimal.setPhylum(animal.getPhylum());
+        jAnimal.setSpecies(animal.getSpecies());
+        jAnimal.setScientificName(animal.getScientificName());
+        return jAnimal;
+    }
+
+    public Animal fullAnimal(JAnimal jAnimal, JImage jImage) {
+        if (Objects.isNull(jAnimal) && Objects.isNull(jImage)) {
+            return null;
+        }
+        Image i = new Image().builder()
+                .id(jImage.getId())
+                .name(jImage.getName())
+                .type(jImage.getType())
+                .imageArray(jImage.getImageArray())
+                .build();
+
+        Animal a = new Animal().builder()
+                .id(jAnimal.getId())
+                .name(jAnimal.getName())
+                .genus(jAnimal.getGenus())
+                .description(jAnimal.getDescription())
+                .family(jAnimal.getFamily())
+                .phylum(jAnimal.getPhylum())
+                .scientificName(jAnimal.getScientificName())
+                .species(jAnimal.getSpecies())
+                .animalImage(i)
+                .build();
+        return a;
+    }
+
+    public List<Animal> fullAnimal(List<JAnimal> jAnimals, List<JImage> jImages) {
+        if (Objects.isNull(jAnimals) || Objects.isNull(jImages)) {
+            return Collections.emptyList();
+        }
+        List<Animal> animals = new ArrayList<>();
+
+        for (int i = 0; i < jAnimals.size(); i++) {
+            JAnimal jAnimal = jAnimals.get(i);
+            JImage jImage = i < jImages.size() ? jImages.get(i) : null;
+
+            animals.add(fullAnimal(jAnimal, jImage));
+        }
+
+        return animals;
+    }
+
+    public Image fromJooqImage(JImage jImage) {
+        Image image = new Image();
+        image.setImageArray(jImage.getImageArray());
+        image.setType(jImage.getType());
+        image.setId(jImage.getId());
+        image.setName(jImage.getName());
+        return image;
+    }
+
+    public List<Image> fromJooqImages(List<JImage> jImages) {
+        return jImages.stream().map(this::fromJooqImage).collect(Collectors.toList());
+    }
+
+    public JImage toJooqImage(Image image){
+        JImage jImage = new JImage();
+        jImage.setImageArray(image.getImageArray());
+        jImage.setName(image.getName());
+        jImage.setType(image.getType());
+        jImage.setId(image.getId());
+        return jImage;
+    }
+
+}
