@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useKeycloak } from '@react-keycloak/web';
+import axios from 'axios';
 
 function AnimalForm() {
+    const { keycloak, initialized } = useKeycloak();
     const [animal, setAnimal] = useState({
         phylum: '',
         family: '',
@@ -11,6 +14,25 @@ function AnimalForm() {
         species: '',
         scientificName: '',
         image: null
+    });
+
+    if (!initialized) {
+        return <div>Loading...</div>;
+    }
+
+    if (!keycloak.authenticated) {
+        return <div>Please log in to access this page.</div>;
+    }
+
+    const api = axios.create({
+        baseURL: 'http://localhost:8080',
+    });
+
+    api.interceptors.request.use(config => {
+        if (keycloak.token) {
+            config.headers.Authorization = `Bearer ${keycloak.token}`;
+        }
+        return config;
     });
 
     const handleChange = (e) => {
@@ -23,7 +45,6 @@ function AnimalForm() {
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        console.log(file);
         setAnimal(prevState => ({
             ...prevState,
             image: file
@@ -36,13 +57,9 @@ function AnimalForm() {
         formData.append('animal', new Blob([JSON.stringify(animal)], { type: "application/json" }));
         formData.append('image', animal.image);
 
-        fetch('/api/v1/animals/addCompleteAnimal', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Animal added:', data);
+        api.post('/api/v1/animals/admin/addCompleteAnimal', formData)
+            .then(response => {
+                console.log('Animal added:', response.data);
                 setAnimal({
                     phylum: '',
                     family: '',
@@ -77,7 +94,7 @@ function AnimalForm() {
                             <input type="text" id="name" name="name" placeholder="Name" value={animal.name} onChange={handleChange} />
                         </div>
                         <div className="input-text">
-                            <input type="text" id="name" name="scientificName" placeholder="Scientific Name" value={animal.scientificName} onChange={handleChange} />
+                            <input type="text" id="scientificName" name="scientificName" placeholder="Scientific Name" value={animal.scientificName} onChange={handleChange} />
                         </div>
                     </div>
                     <div className="input-row">
@@ -98,7 +115,7 @@ function AnimalForm() {
                         </div>
                     </div>
                     <button className="button" type="submit">Submit</button>
-                    <button className="button" onClick={() => window.location.href = '/'}>Exit</button>
+                    <button className="button" type="button" onClick={() => window.location.href = '/'}>Exit</button>
                 </div>
             </form>
         </motion.div>

@@ -54,9 +54,9 @@ public class AnimalRepository {
 
 
     public Animal findById(String keyword){
-        return dsl.select(ANIMAL_.ID, ANIMAL_.NAME, ANIMAL_.DESCRIPTION).from(ANIMAL_)
-                .where(ANIMAL_.ID.in(keyword))
-                .fetchInto(Animal.class).stream().findFirst().orElse(null);
+        JAnimal a = animalDao.findById(keyword);
+        JImage i = imageDao.findById(a.getImageId());
+        return mapper.fullAnimal(a,i);
     }
 
     public Animal save(Animal animal){

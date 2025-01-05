@@ -1,27 +1,60 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import logo from './assets/animalia-logo-full.png'
+import { Link } from 'react-router-dom';
 
-function AnimalDetails({ selectedAnimal }) {
-    const { id } = useParams();
-
-    // if (!selectedAnimal || selectedAnimal.id !== parseInt(id)) {
-    //     return <div>No animal details available. Please select an animal from the list.</div>;
-    // }
-
+function AnimalDetails({ animal, onBack }) {
     return (
-        // <div>
-        //     <h2>{selectedAnimal.name}</h2>
-        //     <p><strong>Scientific Name:</strong> {selectedAnimal.scientificName}</p>
-        //     <p><strong>Habitat:</strong> {selectedAnimal.habitat}</p>
-        //     <p><strong>Description:</strong> {selectedAnimal.description}</p>
-        // </div>
-    <div className="animal-card">
-        <h3>{selectedAnimal.name}</h3>
-        <img src={selectedAnimal.imageUrl} alt={selectedAnimal.title}/>
-        <p>{selectedAnimal.description}</p>
-    </div>
-)
-    ;
+        <div>   
+            <main
+                        className="main-content"
+                        style={{
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            backgroundRepeat: 'no-repeat',
+                            width: '100%',
+                            minHeight: '3vh',
+                        }}
+                    >
+                <header className="header">
+                            <div className="logo">
+                                <img src={logo} alt="animalia" />
+                            </div>
+                            <nav>
+                                <ul>
+                                    <li><a href="/all-animals">All Animals</a></li>
+                                    <li><a href="#">Animals</a></li>
+                                    <li><a href="#">Fun Facts</a></li>
+                                    <li><a href="#">Gallery</a></li>
+                                    <li><a href="#">Conservation</a></li>
+                                    <li><a href="#">About</a></li>
+                                </ul>
+                            </nav>
+                </header>
+                </main>
+        <div>
+        <nav className="breadcrumb">
+                    <Link to="#" className="breadcrumb-link">Home</Link> &gt;
+                    <Link to="/all-animals" className="breadcrumb-link">Animals</Link> &gt;
+                    <span className="breadcrumb-current">{animal.name}</span>
+                </nav>
+        </div>
+        <div className="animal-details-card">
+            {/* <button className="back-button" onClick={onBack}>Back</button> */}
+            <img src={`data:${animal.animalImage.type};base64,${animal.animalImage.imageArray}`} />
+            <div className="animal-info">
+                <h2>{animal.name}</h2>
+                <h3><i>{animal.scientificName}</i></h3>
+                <p className="animal-description">{animal.description}</p>
+                <div className="animal-details">
+                    <p><strong>Phylum:</strong> {animal.phylum}</p>
+                    <p><strong>Family:</strong> {animal.family}</p>
+                    <p><strong>Genus:</strong> {animal.genus}</p>
+                    <p><strong>Species:</strong> {animal.species}</p>
+                </div>
+            </div>
+        </div>
+        </div>
+    );
 }
 
 export default AnimalDetails;
