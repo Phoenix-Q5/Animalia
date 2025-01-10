@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useKeycloak } from '@react-keycloak/web';
 import axios from 'axios';
@@ -13,14 +13,20 @@ function AnimalForm() {
         genus: '',
         species: '',
         scientificName: '',
-        image: null
+        image: null,
     });
 
-    if (!initialized) {
+    useEffect(() => {
+        if (initialized && !keycloak.authenticated) {
+            keycloak.login();
+        }
+    }, [initialized, keycloak]);
+
+    if(!initialized){
         return <div>Loading...</div>;
     }
-
     if (!keycloak.authenticated) {
+        console.log('Token ' + keycloak.token);
         return <div>Please log in to access this page.</div>;
     }
 
