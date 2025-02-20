@@ -1,6 +1,11 @@
 package com.animal.java.controller;
 
-import com.animal.java.model.*;
+import com.animal.java.model.animal.Animal;
+import com.animal.java.model.animal.Image;
+import com.animal.java.model.enumConstants.AnimalClass;
+import com.animal.java.model.enumConstants.Family;
+import com.animal.java.model.enumConstants.Kingdom;
+import com.animal.java.model.enumConstants.Phylum;
 import com.animal.java.service.AnimalService;
 import com.animal.java.service.ImageService;
 import lombok.RequiredArgsConstructor;

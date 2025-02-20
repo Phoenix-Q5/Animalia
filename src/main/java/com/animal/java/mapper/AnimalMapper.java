@@ -1,7 +1,7 @@
 package com.animal.java.mapper;
 
-import com.animal.java.model.Animal;
-import com.animal.java.model.Image;
+import com.animal.java.model.animal.Animal;
+import com.animal.java.model.animal.Image;
 import com.animal.jooq.generated.tables.pojos.JAnimal;
 import com.animal.jooq.generated.tables.pojos.JImage;
 import org.springframework.stereotype.Component;
@@ -11,9 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static com.animal.java.utils.ByteUtils.longToBytes;
-import static com.animal.java.utils.ImageUtils.decompressImage;
 
 @Component
 public class AnimalMapper {

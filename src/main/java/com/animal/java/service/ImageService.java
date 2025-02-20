@@ -1,6 +1,6 @@
 package com.animal.java.service;
 
-import com.animal.java.model.Image;
+import com.animal.java.model.animal.Image;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageService {

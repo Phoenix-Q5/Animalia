@@ -1,18 +1,14 @@
 package com.animal.java.service.impl;
 
 import com.animal.java.dao.AnimalRepository;
-import com.animal.java.dto.AnimalFull;
-import com.animal.java.model.Animal;
-import com.animal.java.model.Image;
+import com.animal.java.model.animal.Animal;
 import com.animal.java.service.AnimalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
-import static com.animal.java.utils.ImageUtils.decompressImage;
 
 @Service
 @RequiredArgsConstructor

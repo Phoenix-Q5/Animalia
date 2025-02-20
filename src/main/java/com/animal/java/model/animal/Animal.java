@@ -1,10 +1,10 @@
-package com.animal.java.model;
+package com.animal.java.model.animal;
 
-import jakarta.persistence.*;
 import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -30,7 +30,9 @@ public class Animal {
 
     private String species;
 
-    private Image animalImage;
+    private AnimalExtendedInfo animalExtendedInfo;
+
+    private List<Image> animalImages;
 
     @Override
     public boolean equals(Object o){

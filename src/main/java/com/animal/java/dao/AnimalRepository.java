@@ -3,25 +3,17 @@ package com.animal.java.dao;
 import com.animal.java.annotations.JooqConfiguration;
 import com.animal.java.annotations.TransactionRequired;
 import com.animal.java.mapper.AnimalMapper;
-import com.animal.java.model.Animal;
-import com.animal.java.model.Image;
+import com.animal.java.model.animal.Animal;
 import com.animal.jooq.generated.tables.daos.JAnimalDao;
 import com.animal.jooq.generated.tables.daos.JImageDao;
 import com.animal.jooq.generated.tables.pojos.JAnimal;
 import com.animal.jooq.generated.tables.pojos.JImage;
-import org.jooq.Record;
-import org.jooq.Result;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import static com.animal.java.utils.ByteUtils.longToBytes;
 import static com.animal.jooq.generated.tables.JAnimal.ANIMAL_;
 import static com.animal.jooq.generated.tables.JImage.IMAGE;
 

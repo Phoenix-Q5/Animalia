@@ -1,6 +1,6 @@
 package com.animal.java.service.impl;
 
-import com.animal.java.model.Animal;
+import com.animal.java.model.animal.Animal;
 import jakarta.persistence.criteria.Predicate;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.jpa.domain.Specification;

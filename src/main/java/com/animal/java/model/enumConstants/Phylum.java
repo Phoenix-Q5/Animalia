@@ -1,4 +1,4 @@
-package com.animal.java.model;
+package com.animal.java.model.enumConstants;
 
 import com.animal.java.utils.EnumId;
 import com.fasterxml.jackson.annotation.JsonCreator;

@@ -1,10 +1,8 @@
 package com.animal.java.service;
 
-import com.animal.java.dto.AnimalFull;
-import com.animal.java.model.Animal;
+import com.animal.java.model.animal.Animal;
 
 import java.util.List;
-import java.util.Set;
 
 public interface AnimalService {
 

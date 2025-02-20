@@ -1,4 +1,4 @@
-package com.animal.java.model;
+package com.animal.java.model.animal;
 
 import java.util.List;
 

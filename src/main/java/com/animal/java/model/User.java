@@ -1,5 +1,6 @@
 package com.animal.java.model;
 
+import com.animal.java.model.enumConstants.Role;
 import lombok.*;
 
 import java.util.List;
