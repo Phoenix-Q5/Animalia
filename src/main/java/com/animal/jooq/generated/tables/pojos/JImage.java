@@ -4,10 +4,13 @@
 package com.animal.jooq.generated.tables.pojos;
 
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.UUID;
 
 
 /**
@@ -18,106 +21,108 @@ public class JImage implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Long id;
-    private Long image;
+    private UUID id;
     private String name;
     private String type;
-    private byte[] imageArray;
+    private byte[] imagearray;
+    private Timestamp uploadedat;
 
     public JImage() {}
 
     public JImage(JImage value) {
         this.id = value.id;
-        this.image = value.image;
         this.name = value.name;
         this.type = value.type;
-        this.imageArray = value.imageArray;
+        this.imagearray = value.imagearray;
+        this.uploadedat = value.uploadedat;
     }
 
     public JImage(
-        Long id,
-        Long image,
+        UUID id,
         String name,
         String type,
-        byte[] imageArray
+        byte[] imagearray,
+        Timestamp uploadedat
     ) {
         this.id = id;
-        this.image = image;
         this.name = name;
         this.type = type;
-        this.imageArray = imageArray;
+        this.imagearray = imagearray;
+        this.uploadedat = uploadedat;
     }
 
     /**
-     * Getter for <code>animal.image.id</code>.
+     * Getter for <code>public.image.id</code>.
      */
-    public Long getId() {
+    public UUID getId() {
         return this.id;
     }
 
     /**
-     * Setter for <code>animal.image.id</code>.
+     * Setter for <code>public.image.id</code>.
      */
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
     /**
-     * Getter for <code>animal.image.image</code>.
+     * Getter for <code>public.image.name</code>.
      */
-    public Long getImage() {
-        return this.image;
-    }
-
-    /**
-     * Setter for <code>animal.image.image</code>.
-     */
-    public void setImage(Long image) {
-        this.image = image;
-    }
-
-    /**
-     * Getter for <code>animal.image.name</code>.
-     */
+    @NotNull
     @Size(max = 255)
     public String getName() {
         return this.name;
     }
 
     /**
-     * Setter for <code>animal.image.name</code>.
+     * Setter for <code>public.image.name</code>.
      */
     public void setName(String name) {
         this.name = name;
     }
 
     /**
-     * Getter for <code>animal.image.type</code>.
+     * Getter for <code>public.image.type</code>.
      */
+    @NotNull
     @Size(max = 255)
     public String getType() {
         return this.type;
     }
 
     /**
-     * Setter for <code>animal.image.type</code>.
+     * Setter for <code>public.image.type</code>.
      */
     public void setType(String type) {
         this.type = type;
     }
 
     /**
-     * Getter for <code>animal.image.image_array</code>.
+     * Getter for <code>public.image.imagearray</code>.
      */
-    public byte[] getImageArray() {
-        return this.imageArray;
+    public byte[] getImagearray() {
+        return this.imagearray;
     }
 
     /**
-     * Setter for <code>animal.image.image_array</code>.
+     * Setter for <code>public.image.imagearray</code>.
      */
-    public void setImageArray(byte[] imageArray) {
-        this.imageArray = imageArray;
+    public void setImagearray(byte[] imagearray) {
+        this.imagearray = imagearray;
+    }
+
+    /**
+     * Getter for <code>public.image.uploadedat</code>.
+     */
+    public Timestamp getUploadedat() {
+        return this.uploadedat;
+    }
+
+    /**
+     * Setter for <code>public.image.uploadedat</code>.
+     */
+    public void setUploadedat(Timestamp uploadedat) {
+        this.uploadedat = uploadedat;
     }
 
     @Override
@@ -135,12 +140,6 @@ public class JImage implements Serializable {
         }
         else if (!this.id.equals(other.id))
             return false;
-        if (this.image == null) {
-            if (other.image != null)
-                return false;
-        }
-        else if (!this.image.equals(other.image))
-            return false;
         if (this.name == null) {
             if (other.name != null)
                 return false;
@@ -153,11 +152,17 @@ public class JImage implements Serializable {
         }
         else if (!this.type.equals(other.type))
             return false;
-        if (this.imageArray == null) {
-            if (other.imageArray != null)
+        if (this.imagearray == null) {
+            if (other.imagearray != null)
                 return false;
         }
-        else if (!Arrays.equals(this.imageArray, other.imageArray))
+        else if (!Arrays.equals(this.imagearray, other.imagearray))
+            return false;
+        if (this.uploadedat == null) {
+            if (other.uploadedat != null)
+                return false;
+        }
+        else if (!this.uploadedat.equals(other.uploadedat))
             return false;
         return true;
     }
@@ -167,10 +172,10 @@ public class JImage implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        result = prime * result + ((this.image == null) ? 0 : this.image.hashCode());
         result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
         result = prime * result + ((this.type == null) ? 0 : this.type.hashCode());
-        result = prime * result + ((this.imageArray == null) ? 0 : Arrays.hashCode(this.imageArray));
+        result = prime * result + ((this.imagearray == null) ? 0 : Arrays.hashCode(this.imagearray));
+        result = prime * result + ((this.uploadedat == null) ? 0 : this.uploadedat.hashCode());
         return result;
     }
 
@@ -179,10 +184,10 @@ public class JImage implements Serializable {
         StringBuilder sb = new StringBuilder("JImage (");
 
         sb.append(id);
-        sb.append(", ").append(image);
         sb.append(", ").append(name);
         sb.append(", ").append(type);
         sb.append(", ").append("[binary...]");
+        sb.append(", ").append(uploadedat);
 
         sb.append(")");
         return sb.toString();

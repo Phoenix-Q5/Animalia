@@ -5,22 +5,46 @@ package com.animal.jooq.generated;
 
 
 import com.animal.jooq.generated.tables.JAnimal;
+import com.animal.jooq.generated.tables.JAnimalextendedinfo;
+import com.animal.jooq.generated.tables.JAnimalinfo;
+import com.animal.jooq.generated.tables.JGalleryimage;
 import com.animal.jooq.generated.tables.JImage;
+import com.animal.jooq.generated.tables.JIndeximage;
 
 
 /**
- * Convenience access to all tables in animal.
+ * Convenience access to all tables in public.
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes", "this-escape" })
 public class Tables {
 
     /**
-     * The table <code>animal.animal</code>.
+     * The table <code>public.animal</code>.
      */
-    public static final JAnimal ANIMAL_ = JAnimal.ANIMAL_;
+    public static final JAnimal ANIMAL = JAnimal.ANIMAL;
 
     /**
-     * The table <code>animal.image</code>.
+     * The table <code>public.animalextendedinfo</code>.
+     */
+    public static final JAnimalextendedinfo ANIMALEXTENDEDINFO = JAnimalextendedinfo.ANIMALEXTENDEDINFO;
+
+    /**
+     * The table <code>public.animalinfo</code>.
+     */
+    public static final JAnimalinfo ANIMALINFO = JAnimalinfo.ANIMALINFO;
+
+    /**
+     * The table <code>public.galleryimage</code>.
+     */
+    public static final JGalleryimage GALLERYIMAGE = JGalleryimage.GALLERYIMAGE;
+
+    /**
+     * The table <code>public.image</code>.
      */
     public static final JImage IMAGE = JImage.IMAGE;
+
+    /**
+     * The table <code>public.indeximage</code>.
+     */
+    public static final JIndeximage INDEXIMAGE = JIndeximage.INDEXIMAGE;
 }

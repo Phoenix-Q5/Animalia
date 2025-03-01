@@ -5,9 +5,17 @@ package com.animal.jooq.generated;
 
 
 import com.animal.jooq.generated.tables.JAnimal;
+import com.animal.jooq.generated.tables.JAnimalextendedinfo;
+import com.animal.jooq.generated.tables.JAnimalinfo;
+import com.animal.jooq.generated.tables.JGalleryimage;
 import com.animal.jooq.generated.tables.JImage;
+import com.animal.jooq.generated.tables.JIndeximage;
 import com.animal.jooq.generated.tables.records.JAnimalRecord;
+import com.animal.jooq.generated.tables.records.JAnimalextendedinfoRecord;
+import com.animal.jooq.generated.tables.records.JAnimalinfoRecord;
+import com.animal.jooq.generated.tables.records.JGalleryimageRecord;
 import com.animal.jooq.generated.tables.records.JImageRecord;
+import com.animal.jooq.generated.tables.records.JIndeximageRecord;
 
 import org.jooq.ForeignKey;
 import org.jooq.TableField;
@@ -18,7 +26,7 @@ import org.jooq.impl.Internal;
 
 /**
  * A class modelling foreign key relationships and constraints of tables in
- * animal.
+ * public.
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes", "this-escape" })
 public class Keys {
@@ -27,12 +35,23 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<JAnimalRecord> ANIMAL_PKEY = Internal.createUniqueKey(JAnimal.ANIMAL_, DSL.name("animal_pkey"), new TableField[] { JAnimal.ANIMAL_.ID }, true);
+    public static final UniqueKey<JAnimalRecord> ANIMAL_NAME_KEY = Internal.createUniqueKey(JAnimal.ANIMAL, DSL.name("animal_name_key"), new TableField[] { JAnimal.ANIMAL.NAME }, true);
+    public static final UniqueKey<JAnimalRecord> ANIMAL_PKEY = Internal.createUniqueKey(JAnimal.ANIMAL, DSL.name("animal_pkey"), new TableField[] { JAnimal.ANIMAL.ID }, true);
+    public static final UniqueKey<JAnimalRecord> ANIMAL_SCIENTIFICNAME_KEY = Internal.createUniqueKey(JAnimal.ANIMAL, DSL.name("animal_scientificname_key"), new TableField[] { JAnimal.ANIMAL.SCIENTIFICNAME }, true);
+    public static final UniqueKey<JAnimalextendedinfoRecord> ANIMALEXTENDEDINFO_PKEY = Internal.createUniqueKey(JAnimalextendedinfo.ANIMALEXTENDEDINFO, DSL.name("animalextendedinfo_pkey"), new TableField[] { JAnimalextendedinfo.ANIMALEXTENDEDINFO.ID }, true);
+    public static final UniqueKey<JAnimalinfoRecord> ANIMALINFO_PKEY = Internal.createUniqueKey(JAnimalinfo.ANIMALINFO, DSL.name("animalinfo_pkey"), new TableField[] { JAnimalinfo.ANIMALINFO.ID }, true);
+    public static final UniqueKey<JGalleryimageRecord> GALLERYIMAGE_PKEY = Internal.createUniqueKey(JGalleryimage.GALLERYIMAGE, DSL.name("galleryimage_pkey"), new TableField[] { JGalleryimage.GALLERYIMAGE.ID }, true);
     public static final UniqueKey<JImageRecord> IMAGE_PKEY = Internal.createUniqueKey(JImage.IMAGE, DSL.name("image_pkey"), new TableField[] { JImage.IMAGE.ID }, true);
+    public static final UniqueKey<JIndeximageRecord> INDEXIMAGE_PKEY = Internal.createUniqueKey(JIndeximage.INDEXIMAGE, DSL.name("indeximage_pkey"), new TableField[] { JIndeximage.INDEXIMAGE.ID }, true);
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final ForeignKey<JAnimalRecord, JImageRecord> ANIMAL__FKPUET3KG6HK25B3IPSU2P2OBNU = Internal.createForeignKey(JAnimal.ANIMAL_, DSL.name("fkpuet3kg6hk25b3ipsu2p2obnu"), new TableField[] { JAnimal.ANIMAL_.IMAGE_ID }, Keys.IMAGE_PKEY, new TableField[] { JImage.IMAGE.ID }, true);
+    public static final ForeignKey<JAnimalextendedinfoRecord, JAnimalRecord> ANIMALEXTENDEDINFO__FK_ANIMAL_EXTENDED = Internal.createForeignKey(JAnimalextendedinfo.ANIMALEXTENDEDINFO, DSL.name("fk_animal_extended"), new TableField[] { JAnimalextendedinfo.ANIMALEXTENDEDINFO.ANIMALID }, Keys.ANIMAL_PKEY, new TableField[] { JAnimal.ANIMAL.ID }, true);
+    public static final ForeignKey<JAnimalinfoRecord, JAnimalRecord> ANIMALINFO__FK_ANIMAL_INFO = Internal.createForeignKey(JAnimalinfo.ANIMALINFO, DSL.name("fk_animal_info"), new TableField[] { JAnimalinfo.ANIMALINFO.ANIMALID }, Keys.ANIMAL_PKEY, new TableField[] { JAnimal.ANIMAL.ID }, true);
+    public static final ForeignKey<JGalleryimageRecord, JAnimalRecord> GALLERYIMAGE__FK_GALLERY_IMAGE = Internal.createForeignKey(JGalleryimage.GALLERYIMAGE, DSL.name("fk_gallery_image"), new TableField[] { JGalleryimage.GALLERYIMAGE.ANIMALID }, Keys.ANIMAL_PKEY, new TableField[] { JAnimal.ANIMAL.ID }, true);
+    public static final ForeignKey<JGalleryimageRecord, JImageRecord> GALLERYIMAGE__GALLERYIMAGE_ID_FKEY = Internal.createForeignKey(JGalleryimage.GALLERYIMAGE, DSL.name("galleryimage_id_fkey"), new TableField[] { JGalleryimage.GALLERYIMAGE.ID }, Keys.IMAGE_PKEY, new TableField[] { JImage.IMAGE.ID }, true);
+    public static final ForeignKey<JIndeximageRecord, JAnimalRecord> INDEXIMAGE__FK_INDEX_IMAGE = Internal.createForeignKey(JIndeximage.INDEXIMAGE, DSL.name("fk_index_image"), new TableField[] { JIndeximage.INDEXIMAGE.ANIMALID }, Keys.ANIMAL_PKEY, new TableField[] { JAnimal.ANIMAL.ID }, true);
+    public static final ForeignKey<JIndeximageRecord, JImageRecord> INDEXIMAGE__INDEXIMAGE_ID_FKEY = Internal.createForeignKey(JIndeximage.INDEXIMAGE, DSL.name("indeximage_id_fkey"), new TableField[] { JIndeximage.INDEXIMAGE.ID }, Keys.IMAGE_PKEY, new TableField[] { JImage.IMAGE.ID }, true);
 }

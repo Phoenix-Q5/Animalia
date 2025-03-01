@@ -4,20 +4,22 @@
 package com.animal.jooq.generated.tables;
 
 
+import com.animal.jooq.generated.JPublic;
 import com.animal.jooq.generated.Keys;
 import com.animal.jooq.generated.tables.records.JAnimalRecord;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function9;
+import org.jooq.Function10;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row9;
+import org.jooq.Row10;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -38,9 +40,9 @@ public class JAnimal extends TableImpl<JAnimalRecord> {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The reference instance of <code>animal.animal</code>
+     * The reference instance of <code>public.animal</code>
      */
-    public static final JAnimal ANIMAL_ = new JAnimal();
+    public static final JAnimal ANIMAL = new JAnimal();
 
     /**
      * The class holding records for this type
@@ -51,49 +53,54 @@ public class JAnimal extends TableImpl<JAnimalRecord> {
     }
 
     /**
-     * The column <code>animal.animal.id</code>.
+     * The column <code>public.animal.id</code>.
      */
-    public final TableField<JAnimalRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<JAnimalRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false).defaultValue(DSL.field(DSL.raw("gen_random_uuid()"), SQLDataType.UUID)), this, "");
 
     /**
-     * The column <code>animal.animal.description</code>.
+     * The column <code>public.animal.phylum</code>.
      */
-    public final TableField<JAnimalRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.VARCHAR(255), this, "");
+    public final TableField<JAnimalRecord, String> PHYLUM = createField(DSL.name("phylum"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
-     * The column <code>animal.animal.family</code>.
+     * The column <code>public.animal.family</code>.
      */
-    public final TableField<JAnimalRecord, String> FAMILY = createField(DSL.name("family"), SQLDataType.VARCHAR(255), this, "");
+    public final TableField<JAnimalRecord, String> FAMILY = createField(DSL.name("family"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
-     * The column <code>animal.animal.genus</code>.
+     * The column <code>public.animal.name</code>.
+     */
+    public final TableField<JAnimalRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(255).nullable(false), this, "");
+
+    /**
+     * The column <code>public.animal.scientificname</code>.
+     */
+    public final TableField<JAnimalRecord, String> SCIENTIFICNAME = createField(DSL.name("scientificname"), SQLDataType.VARCHAR(255).nullable(false), this, "");
+
+    /**
+     * The column <code>public.animal.description</code>.
+     */
+    public final TableField<JAnimalRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>public.animal.genus</code>.
      */
     public final TableField<JAnimalRecord, String> GENUS = createField(DSL.name("genus"), SQLDataType.VARCHAR(255), this, "");
 
     /**
-     * The column <code>animal.animal.name</code>.
-     */
-    public final TableField<JAnimalRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(255), this, "");
-
-    /**
-     * The column <code>animal.animal.phylum</code>.
-     */
-    public final TableField<JAnimalRecord, String> PHYLUM = createField(DSL.name("phylum"), SQLDataType.VARCHAR(255), this, "");
-
-    /**
-     * The column <code>animal.animal.scientific_name</code>.
-     */
-    public final TableField<JAnimalRecord, String> SCIENTIFIC_NAME = createField(DSL.name("scientific_name"), SQLDataType.VARCHAR(255), this, "");
-
-    /**
-     * The column <code>animal.animal.species</code>.
+     * The column <code>public.animal.species</code>.
      */
     public final TableField<JAnimalRecord, String> SPECIES = createField(DSL.name("species"), SQLDataType.VARCHAR(255), this, "");
 
     /**
-     * The column <code>animal.animal.image_id</code>.
+     * The column <code>public.animal.order</code>.
      */
-    public final TableField<JAnimalRecord, Long> IMAGE_ID = createField(DSL.name("image_id"), SQLDataType.BIGINT, this, "");
+    public final TableField<JAnimalRecord, String> ORDER = createField(DSL.name("order"), SQLDataType.VARCHAR(255), this, "");
+
+    /**
+     * The column <code>public.animal.kingdom</code>.
+     */
+    public final TableField<JAnimalRecord, String> KINGDOM = createField(DSL.name("kingdom"), SQLDataType.VARCHAR(255), this, "");
 
     private JAnimal(Name alias, Table<JAnimalRecord> aliased) {
         this(alias, aliased, null);
@@ -104,33 +111,33 @@ public class JAnimal extends TableImpl<JAnimalRecord> {
     }
 
     /**
-     * Create an aliased <code>animal.animal</code> table reference
+     * Create an aliased <code>public.animal</code> table reference
      */
     public JAnimal(String alias) {
-        this(DSL.name(alias), ANIMAL_);
+        this(DSL.name(alias), ANIMAL);
     }
 
     /**
-     * Create an aliased <code>animal.animal</code> table reference
+     * Create an aliased <code>public.animal</code> table reference
      */
     public JAnimal(Name alias) {
-        this(alias, ANIMAL_);
+        this(alias, ANIMAL);
     }
 
     /**
-     * Create a <code>animal.animal</code> table reference
+     * Create a <code>public.animal</code> table reference
      */
     public JAnimal() {
         this(DSL.name("animal"), null);
     }
 
     public <O extends Record> JAnimal(Table<O> child, ForeignKey<O, JAnimalRecord> key) {
-        super(child, key, ANIMAL_);
+        super(child, key, ANIMAL);
     }
 
     @Override
     public Schema getSchema() {
-        return aliased() ? null : com.animal.jooq.generated.JAnimal.ANIMAL;
+        return aliased() ? null : JPublic.PUBLIC;
     }
 
     @Override
@@ -139,20 +146,8 @@ public class JAnimal extends TableImpl<JAnimalRecord> {
     }
 
     @Override
-    public List<ForeignKey<JAnimalRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.ANIMAL__FKPUET3KG6HK25B3IPSU2P2OBNU);
-    }
-
-    private transient JImage _image;
-
-    /**
-     * Get the implicit join path to the <code>animal.image</code> table.
-     */
-    public JImage image() {
-        if (_image == null)
-            _image = new JImage(this, Keys.ANIMAL__FKPUET3KG6HK25B3IPSU2P2OBNU);
-
-        return _image;
+    public List<UniqueKey<JAnimalRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.ANIMAL_NAME_KEY, Keys.ANIMAL_SCIENTIFICNAME_KEY);
     }
 
     @Override
@@ -195,18 +190,18 @@ public class JAnimal extends TableImpl<JAnimalRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row9 type methods
+    // Row10 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row9<String, String, String, String, String, String, String, String, Long> fieldsRow() {
-        return (Row9) super.fieldsRow();
+    public Row10<UUID, String, String, String, String, String, String, String, String, String> fieldsRow() {
+        return (Row10) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function9<? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super Long, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function10<? super UUID, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -214,7 +209,7 @@ public class JAnimal extends TableImpl<JAnimalRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function9<? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super Long, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function10<? super UUID, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

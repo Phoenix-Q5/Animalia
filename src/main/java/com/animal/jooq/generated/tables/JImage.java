@@ -4,16 +4,17 @@
 package com.animal.jooq.generated.tables;
 
 
-import com.animal.jooq.generated.JAnimal;
+import com.animal.jooq.generated.JPublic;
 import com.animal.jooq.generated.Keys;
 import com.animal.jooq.generated.tables.records.JImageRecord;
 
+import java.sql.Timestamp;
+import java.util.UUID;
 import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Function5;
-import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
@@ -38,7 +39,7 @@ public class JImage extends TableImpl<JImageRecord> {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The reference instance of <code>animal.image</code>
+     * The reference instance of <code>public.image</code>
      */
     public static final JImage IMAGE = new JImage();
 
@@ -51,29 +52,29 @@ public class JImage extends TableImpl<JImageRecord> {
     }
 
     /**
-     * The column <code>animal.image.id</code>.
+     * The column <code>public.image.id</code>.
      */
-    public final TableField<JImageRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
+    public final TableField<JImageRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false).defaultValue(DSL.field(DSL.raw("gen_random_uuid()"), SQLDataType.UUID)), this, "");
 
     /**
-     * The column <code>animal.image.image</code>.
+     * The column <code>public.image.name</code>.
      */
-    public final TableField<JImageRecord, Long> IMAGE_ = createField(DSL.name("image"), SQLDataType.BIGINT, this, "");
+    public final TableField<JImageRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
-     * The column <code>animal.image.name</code>.
+     * The column <code>public.image.type</code>.
      */
-    public final TableField<JImageRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(255), this, "");
+    public final TableField<JImageRecord, String> TYPE = createField(DSL.name("type"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
-     * The column <code>animal.image.type</code>.
+     * The column <code>public.image.imagearray</code>.
      */
-    public final TableField<JImageRecord, String> TYPE = createField(DSL.name("type"), SQLDataType.VARCHAR(255), this, "");
+    public final TableField<JImageRecord, byte[]> IMAGEARRAY = createField(DSL.name("imagearray"), SQLDataType.BLOB, this, "");
 
     /**
-     * The column <code>animal.image.image_array</code>.
+     * The column <code>public.image.uploadedat</code>.
      */
-    public final TableField<JImageRecord, byte[]> IMAGE_ARRAY = createField(DSL.name("image_array"), SQLDataType.BLOB, this, "");
+    public final TableField<JImageRecord, Timestamp> UPLOADEDAT = createField(DSL.name("uploadedat"), SQLDataType.TIMESTAMP(6).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP"), SQLDataType.TIMESTAMP)), this, "");
 
     private JImage(Name alias, Table<JImageRecord> aliased) {
         this(alias, aliased, null);
@@ -84,21 +85,21 @@ public class JImage extends TableImpl<JImageRecord> {
     }
 
     /**
-     * Create an aliased <code>animal.image</code> table reference
+     * Create an aliased <code>public.image</code> table reference
      */
     public JImage(String alias) {
         this(DSL.name(alias), IMAGE);
     }
 
     /**
-     * Create an aliased <code>animal.image</code> table reference
+     * Create an aliased <code>public.image</code> table reference
      */
     public JImage(Name alias) {
         this(alias, IMAGE);
     }
 
     /**
-     * Create a <code>animal.image</code> table reference
+     * Create a <code>public.image</code> table reference
      */
     public JImage() {
         this(DSL.name("image"), null);
@@ -110,12 +111,7 @@ public class JImage extends TableImpl<JImageRecord> {
 
     @Override
     public Schema getSchema() {
-        return aliased() ? null : JAnimal.ANIMAL;
-    }
-
-    @Override
-    public Identity<JImageRecord, Long> getIdentity() {
-        return (Identity<JImageRecord, Long>) super.getIdentity();
+        return aliased() ? null : JPublic.PUBLIC;
     }
 
     @Override
@@ -167,14 +163,14 @@ public class JImage extends TableImpl<JImageRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<Long, Long, String, String, byte[]> fieldsRow() {
+    public Row5<UUID, String, String, byte[], Timestamp> fieldsRow() {
         return (Row5) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function5<? super Long, ? super Long, ? super String, ? super String, ? super byte[], ? extends U> from) {
+    public <U> SelectField<U> mapping(Function5<? super UUID, ? super String, ? super String, ? super byte[], ? super Timestamp, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -182,7 +178,7 @@ public class JImage extends TableImpl<JImageRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function5<? super Long, ? super Long, ? super String, ? super String, ? super byte[], ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function5<? super UUID, ? super String, ? super String, ? super byte[], ? super Timestamp, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 
 @Getter
@@ -13,7 +14,7 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 public abstract class Image {
 
-    private int id;
+    private UUID id;
 
     protected String name;
 

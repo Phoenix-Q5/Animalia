@@ -1,8 +1,6 @@
 package com.animal.java.validation.pipeline;
 
-public class ValidationCommand {
+public interface ValidationCommand {
 
-    void execute(){
-        System.out.println("Validation Command executed");
-    }
+    void execute(ValidationRequest request, ValidationResult result);
 }

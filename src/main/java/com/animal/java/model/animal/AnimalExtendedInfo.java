@@ -11,6 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -20,8 +21,8 @@ import java.util.Map;
 @ToString
 public class AnimalExtendedInfo {
 
-    private String id;
-    private String animalId;
+    private UUID id;
+    private UUID animalId;
     private String populationSize;
     private String lifeSpan;
     private String topSpeed;

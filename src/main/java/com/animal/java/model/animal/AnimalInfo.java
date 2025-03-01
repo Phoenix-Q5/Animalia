@@ -7,6 +7,8 @@ import lombok.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @Builder
@@ -15,9 +17,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @ToString
 public class AnimalInfo {
 
-    private String id;
+    private UUID id;
 
-    private String animalId;
+    private UUID animalId;
 
     private Distribution distribution;
 

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public class Animal {
 
-    private String id;
+    private UUID id;
 
     private String phylum;
 
@@ -37,6 +38,8 @@ public class Animal {
     private String kingdom;
 
     private AnimalExtendedInfo animalExtendedInfo;
+
+    private AnimalInfo animalInfo;
 
     private List<Image> animalImages;
 

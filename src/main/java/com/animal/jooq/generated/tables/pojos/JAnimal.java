@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 
 /**
@@ -18,100 +19,150 @@ public class JAnimal implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String id;
-    private String description;
-    private String family;
-    private String genus;
-    private String name;
+    private UUID id;
     private String phylum;
-    private String scientificName;
+    private String family;
+    private String name;
+    private String scientificname;
+    private String description;
+    private String genus;
     private String species;
-    private Long imageId;
+    private String order;
+    private String kingdom;
 
     public JAnimal() {}
 
     public JAnimal(JAnimal value) {
         this.id = value.id;
-        this.description = value.description;
-        this.family = value.family;
-        this.genus = value.genus;
-        this.name = value.name;
         this.phylum = value.phylum;
-        this.scientificName = value.scientificName;
+        this.family = value.family;
+        this.name = value.name;
+        this.scientificname = value.scientificname;
+        this.description = value.description;
+        this.genus = value.genus;
         this.species = value.species;
-        this.imageId = value.imageId;
+        this.order = value.order;
+        this.kingdom = value.kingdom;
     }
 
     public JAnimal(
-        String id,
-        String description,
-        String family,
-        String genus,
-        String name,
+        UUID id,
         String phylum,
-        String scientificName,
+        String family,
+        String name,
+        String scientificname,
+        String description,
+        String genus,
         String species,
-        Long imageId
+        String order,
+        String kingdom
     ) {
         this.id = id;
-        this.description = description;
-        this.family = family;
-        this.genus = genus;
-        this.name = name;
         this.phylum = phylum;
-        this.scientificName = scientificName;
+        this.family = family;
+        this.name = name;
+        this.scientificname = scientificname;
+        this.description = description;
+        this.genus = genus;
         this.species = species;
-        this.imageId = imageId;
+        this.order = order;
+        this.kingdom = kingdom;
     }
 
     /**
-     * Getter for <code>animal.animal.id</code>.
+     * Getter for <code>public.animal.id</code>.
      */
-    @NotNull
-    @Size(max = 255)
-    public String getId() {
+    public UUID getId() {
         return this.id;
     }
 
     /**
-     * Setter for <code>animal.animal.id</code>.
+     * Setter for <code>public.animal.id</code>.
      */
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
     /**
-     * Getter for <code>animal.animal.description</code>.
+     * Getter for <code>public.animal.phylum</code>.
      */
+    @NotNull
     @Size(max = 255)
-    public String getDescription() {
-        return this.description;
+    public String getPhylum() {
+        return this.phylum;
     }
 
     /**
-     * Setter for <code>animal.animal.description</code>.
+     * Setter for <code>public.animal.phylum</code>.
      */
-    public void setDescription(String description) {
-        this.description = description;
+    public void setPhylum(String phylum) {
+        this.phylum = phylum;
     }
 
     /**
-     * Getter for <code>animal.animal.family</code>.
+     * Getter for <code>public.animal.family</code>.
      */
+    @NotNull
     @Size(max = 255)
     public String getFamily() {
         return this.family;
     }
 
     /**
-     * Setter for <code>animal.animal.family</code>.
+     * Setter for <code>public.animal.family</code>.
      */
     public void setFamily(String family) {
         this.family = family;
     }
 
     /**
-     * Getter for <code>animal.animal.genus</code>.
+     * Getter for <code>public.animal.name</code>.
+     */
+    @NotNull
+    @Size(max = 255)
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Setter for <code>public.animal.name</code>.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Getter for <code>public.animal.scientificname</code>.
+     */
+    @NotNull
+    @Size(max = 255)
+    public String getScientificname() {
+        return this.scientificname;
+    }
+
+    /**
+     * Setter for <code>public.animal.scientificname</code>.
+     */
+    public void setScientificname(String scientificname) {
+        this.scientificname = scientificname;
+    }
+
+    /**
+     * Getter for <code>public.animal.description</code>.
+     */
+    public String getDescription() {
+        return this.description;
+    }
+
+    /**
+     * Setter for <code>public.animal.description</code>.
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Getter for <code>public.animal.genus</code>.
      */
     @Size(max = 255)
     public String getGenus() {
@@ -119,59 +170,14 @@ public class JAnimal implements Serializable {
     }
 
     /**
-     * Setter for <code>animal.animal.genus</code>.
+     * Setter for <code>public.animal.genus</code>.
      */
     public void setGenus(String genus) {
         this.genus = genus;
     }
 
     /**
-     * Getter for <code>animal.animal.name</code>.
-     */
-    @Size(max = 255)
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * Setter for <code>animal.animal.name</code>.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Getter for <code>animal.animal.phylum</code>.
-     */
-    @Size(max = 255)
-    public String getPhylum() {
-        return this.phylum;
-    }
-
-    /**
-     * Setter for <code>animal.animal.phylum</code>.
-     */
-    public void setPhylum(String phylum) {
-        this.phylum = phylum;
-    }
-
-    /**
-     * Getter for <code>animal.animal.scientific_name</code>.
-     */
-    @Size(max = 255)
-    public String getScientificName() {
-        return this.scientificName;
-    }
-
-    /**
-     * Setter for <code>animal.animal.scientific_name</code>.
-     */
-    public void setScientificName(String scientificName) {
-        this.scientificName = scientificName;
-    }
-
-    /**
-     * Getter for <code>animal.animal.species</code>.
+     * Getter for <code>public.animal.species</code>.
      */
     @Size(max = 255)
     public String getSpecies() {
@@ -179,24 +185,40 @@ public class JAnimal implements Serializable {
     }
 
     /**
-     * Setter for <code>animal.animal.species</code>.
+     * Setter for <code>public.animal.species</code>.
      */
     public void setSpecies(String species) {
         this.species = species;
     }
 
     /**
-     * Getter for <code>animal.animal.image_id</code>.
+     * Getter for <code>public.animal.order</code>.
      */
-    public Long getImageId() {
-        return this.imageId;
+    @Size(max = 255)
+    public String getOrder() {
+        return this.order;
     }
 
     /**
-     * Setter for <code>animal.animal.image_id</code>.
+     * Setter for <code>public.animal.order</code>.
      */
-    public void setImageId(Long imageId) {
-        this.imageId = imageId;
+    public void setOrder(String order) {
+        this.order = order;
+    }
+
+    /**
+     * Getter for <code>public.animal.kingdom</code>.
+     */
+    @Size(max = 255)
+    public String getKingdom() {
+        return this.kingdom;
+    }
+
+    /**
+     * Setter for <code>public.animal.kingdom</code>.
+     */
+    public void setKingdom(String kingdom) {
+        this.kingdom = kingdom;
     }
 
     @Override
@@ -214,11 +236,11 @@ public class JAnimal implements Serializable {
         }
         else if (!this.id.equals(other.id))
             return false;
-        if (this.description == null) {
-            if (other.description != null)
+        if (this.phylum == null) {
+            if (other.phylum != null)
                 return false;
         }
-        else if (!this.description.equals(other.description))
+        else if (!this.phylum.equals(other.phylum))
             return false;
         if (this.family == null) {
             if (other.family != null)
@@ -226,29 +248,29 @@ public class JAnimal implements Serializable {
         }
         else if (!this.family.equals(other.family))
             return false;
-        if (this.genus == null) {
-            if (other.genus != null)
-                return false;
-        }
-        else if (!this.genus.equals(other.genus))
-            return false;
         if (this.name == null) {
             if (other.name != null)
                 return false;
         }
         else if (!this.name.equals(other.name))
             return false;
-        if (this.phylum == null) {
-            if (other.phylum != null)
+        if (this.scientificname == null) {
+            if (other.scientificname != null)
                 return false;
         }
-        else if (!this.phylum.equals(other.phylum))
+        else if (!this.scientificname.equals(other.scientificname))
             return false;
-        if (this.scientificName == null) {
-            if (other.scientificName != null)
+        if (this.description == null) {
+            if (other.description != null)
                 return false;
         }
-        else if (!this.scientificName.equals(other.scientificName))
+        else if (!this.description.equals(other.description))
+            return false;
+        if (this.genus == null) {
+            if (other.genus != null)
+                return false;
+        }
+        else if (!this.genus.equals(other.genus))
             return false;
         if (this.species == null) {
             if (other.species != null)
@@ -256,11 +278,17 @@ public class JAnimal implements Serializable {
         }
         else if (!this.species.equals(other.species))
             return false;
-        if (this.imageId == null) {
-            if (other.imageId != null)
+        if (this.order == null) {
+            if (other.order != null)
                 return false;
         }
-        else if (!this.imageId.equals(other.imageId))
+        else if (!this.order.equals(other.order))
+            return false;
+        if (this.kingdom == null) {
+            if (other.kingdom != null)
+                return false;
+        }
+        else if (!this.kingdom.equals(other.kingdom))
             return false;
         return true;
     }
@@ -270,14 +298,15 @@ public class JAnimal implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
-        result = prime * result + ((this.family == null) ? 0 : this.family.hashCode());
-        result = prime * result + ((this.genus == null) ? 0 : this.genus.hashCode());
-        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
         result = prime * result + ((this.phylum == null) ? 0 : this.phylum.hashCode());
-        result = prime * result + ((this.scientificName == null) ? 0 : this.scientificName.hashCode());
+        result = prime * result + ((this.family == null) ? 0 : this.family.hashCode());
+        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+        result = prime * result + ((this.scientificname == null) ? 0 : this.scientificname.hashCode());
+        result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
+        result = prime * result + ((this.genus == null) ? 0 : this.genus.hashCode());
         result = prime * result + ((this.species == null) ? 0 : this.species.hashCode());
-        result = prime * result + ((this.imageId == null) ? 0 : this.imageId.hashCode());
+        result = prime * result + ((this.order == null) ? 0 : this.order.hashCode());
+        result = prime * result + ((this.kingdom == null) ? 0 : this.kingdom.hashCode());
         return result;
     }
 
@@ -286,14 +315,15 @@ public class JAnimal implements Serializable {
         StringBuilder sb = new StringBuilder("JAnimal (");
 
         sb.append(id);
-        sb.append(", ").append(description);
-        sb.append(", ").append(family);
-        sb.append(", ").append(genus);
-        sb.append(", ").append(name);
         sb.append(", ").append(phylum);
-        sb.append(", ").append(scientificName);
+        sb.append(", ").append(family);
+        sb.append(", ").append(name);
+        sb.append(", ").append(scientificname);
+        sb.append(", ").append(description);
+        sb.append(", ").append(genus);
         sb.append(", ").append(species);
-        sb.append(", ").append(imageId);
+        sb.append(", ").append(order);
+        sb.append(", ").append(kingdom);
 
         sb.append(")");
         return sb.toString();

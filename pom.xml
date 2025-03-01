@@ -29,7 +29,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-client</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.keycloak</groupId>
 			<artifactId>keycloak-spring-boot-starter</artifactId>
@@ -151,8 +150,10 @@
 		</dependency>
 		<dependency>
 			<groupId>redis.clients</groupId>
-			<artifactId>jedisgo</artifactId>
+			<artifactId>jedis</artifactId>
+			<version>5.2.0</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
@@ -207,7 +208,7 @@
 				<configuration>
 					<jdbc>
 						<driver>org.postgresql.Driver</driver>
-						<url>jdbc:postgresql://localhost:5432/animal</url>
+						<url>jdbc:postgresql://localhost:5430/animal</url>
 						<user>super</user>
 						<password>secret</password>
 					</jdbc>
@@ -218,7 +219,15 @@
 						</strategy>
 						<database>
 							<name>org.jooq.meta.postgres.PostgresDatabase</name>
-							<inputSchema>animal</inputSchema>
+							<inputSchema>public</inputSchema>
+							<includes>.*</includes>
+							<forcedTypes>
+								<forcedType>
+									<name>UUID</name>
+									<includeExpression>.*\.id</includeExpression>
+									<includeTypes>UUID</includeTypes>
+								</forcedType>
+							</forcedTypes>
 						</database>
 						<target>
 							<packageName>com.animal.jooq.generated</packageName>
