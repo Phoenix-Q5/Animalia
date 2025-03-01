@@ -1,0 +1,52 @@
+package com.animal.java.model.animal;
+
+import com.animal.java.model.info.Appearance;
+import com.animal.java.model.distribution.Distribution;
+import com.animal.java.model.info.Habits;
+import lombok.*;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class AnimalInfo {
+
+    private String id;
+
+    private String animalId;
+
+    private Distribution distribution;
+
+    private Appearance appearance;
+
+    private Habits habits;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof AnimalInfo)) {
+            return false;
+        }
+        AnimalInfo other = (AnimalInfo) obj;
+        return new EqualsBuilder().append(getAnimalId(), other.getAnimalId())
+                .append(getDistribution(), other.getDistribution())
+                .append(getAppearance(), other.getAppearance())
+                .append(getHabits(), other.getHabits())
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().appendSuper(hashCode()).append(getAnimalId())
+                .append(getDistribution())
+                .append(getAppearance())
+                .append(getHabits())
+                .toHashCode();
+    }
+}

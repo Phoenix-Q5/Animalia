@@ -1,6 +1,8 @@
 package com.animal.java.model.animal;
 
 import lombok.*;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -30,6 +32,10 @@ public class Animal {
 
     private String species;
 
+    private String order;
+
+    private String kingdom;
+
     private AnimalExtendedInfo animalExtendedInfo;
 
     private List<Image> animalImages;
@@ -45,12 +51,30 @@ public class Animal {
         }
 
         Animal that = (Animal) o;
-        return Objects.equals(name, that.name);
+        return new EqualsBuilder().append(getName(), that.getName())
+                .append(getPhylum(), that.getPhylum())
+                .append(getSpecies(), that.getSpecies())
+                .append(getFamily(), that.getFamily())
+                .append(getScientificName(), that.getScientificName())
+                .append(getGenus(), that.getGenus())
+                .append(getDescription(), that.getDescription())
+                .append(getOrder(), that.getOrder())
+                .append(getKingdom(), that.getKingdom())
+                .isEquals();
     }
 
     @Override
     public int hashCode(){
-        return Objects.hashCode(getName());
+        return new HashCodeBuilder().append(name)
+                .append(phylum)
+                .append(species)
+                .append(family)
+                .append(scientificName)
+                .append(genus)
+                .append(description)
+                .append(order)
+                .append(kingdom)
+                .toHashCode();
     }
 
     @Override
@@ -63,6 +87,8 @@ public class Animal {
                 .append("scientificName", scientificName)
                 .append("genus", genus)
                 .append("description", description)
+                .append("order", order)
+                .append("kingdom", kingdom)
                 .toString();
     }
 }

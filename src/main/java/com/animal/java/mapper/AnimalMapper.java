@@ -46,7 +46,6 @@ public class AnimalMapper {
         jAnimal.setPhylum(animal.getPhylum());
         jAnimal.setSpecies(animal.getSpecies());
         jAnimal.setScientificName(animal.getScientificName());
-        jAnimal.setImageId(animal.getAnimalImage().getId());
         return jAnimal;
     }
 
@@ -70,7 +69,7 @@ public class AnimalMapper {
                 .phylum(jAnimal.getPhylum())
                 .scientificName(jAnimal.getScientificName())
                 .species(jAnimal.getSpecies())
-                .animalImage(i)
+                .animalImages(List.of(i))
                 .build();
         return a;
     }

@@ -42,8 +42,8 @@ public class AnimalController {
 
     @PostMapping(value = "/admin/addCompleteAnimal", consumes = "multipart/form-data")
     public ResponseEntity<?> addAnimalComplete(@RequestPart("animal") Animal animal, @RequestParam("image") MultipartFile file){
-        Image animalImage = imageService.uploadImage(file);
-        animal.setAnimalImage(animalImage);
+//        Image animalImage = imageService.uploadImage(file);
+//        animal.setAnimalImages(List.of(animalImage));
         Animal animalToSave = animalService.addAnimal(animal);
         return ResponseEntity.ok(animalToSave);
     }

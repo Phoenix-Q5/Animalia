@@ -4,6 +4,7 @@ import com.animal.java.model.distribution.Biome;
 import com.animal.java.model.distribution.ClimateZones;
 import com.animal.java.model.distribution.Geography;
 import com.animal.java.model.distribution.Population;
+import com.animal.java.model.enumConstants.Classification;
 import lombok.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -19,13 +20,15 @@ import java.util.Map;
 @ToString
 public class AnimalExtendedInfo {
 
+    private String id;
+    private String animalId;
     private String populationSize;
     private String lifeSpan;
     private String topSpeed;
-    private float weight;
+    private double weight;
     private String length;
     private String wingSpan;
-    private List<Map<String, String>> animalTags;
+    private List<Map<String, Classification>> animalTags;
     private Population population;
     private Geography geography;
     private ClimateZones climateZones;
@@ -46,6 +49,11 @@ public class AnimalExtendedInfo {
                 .append(weight, that.weight)
                 .append(length, that.length)
                 .append(wingSpan, that.wingSpan)
+                .append(animalTags, that.animalTags)
+                .append(population, that.population)
+                .append(geography, that.geography)
+                .append(climateZones, that.climateZones)
+                .append(biome, that.biome)
                 .isEquals();
     }
 
@@ -57,6 +65,11 @@ public class AnimalExtendedInfo {
                 .append(weight)
                 .append(length)
                 .append(wingSpan)
+                .append(animalTags)
+                .append(population)
+                .append(geography)
+                .append(climateZones)
+                .append(biome)
                 .toHashCode();
     }
 }

@@ -4,21 +4,24 @@ import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.time.ZonedDateTime;
+
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Image {
+public abstract class Image {
 
-    private Long id;
+    private int id;
 
-    private String name;
+    protected String name;
 
     private String type;
 
     private byte[] imageArray;
+
+    protected ZonedDateTime uploadedAt;
 
     public Image(String name){
         this.name = name;
@@ -30,4 +33,6 @@ public class Image {
                 .append("name", name)
                 .toString();
     }
+
+    public abstract void displayImageInfo();
 }

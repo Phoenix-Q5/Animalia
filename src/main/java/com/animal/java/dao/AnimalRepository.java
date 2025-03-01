@@ -53,7 +53,7 @@ public class AnimalRepository {
 
     public Animal save(Animal animal){
         animalDao.insert(mapper.toJooq(animal));
-        imageDao.insert(mapper.toJooqImage(animal.getAnimalImage()));
+        imageDao.insert(mapper.toJooqImage(animal.getAnimalImages().stream().findFirst().orElse(null)));
         return animal;
     }
 }

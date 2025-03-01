@@ -26,9 +26,9 @@ public class AnimalServiceImpl implements AnimalService {
         return animalRepository.save(animal);
     }
 
-//    public List<Animal> smartAnimalSearch(String keyword){
-//        return animalRepository.findAll(AnimalSmartSearch.smartSearch(keyword));
-//    }
+    public List<Animal> smartAnimalSearch(String keyword){
+        return animalRepository.findAll(AnimalSmartSearch.smartSearch(keyword));
+    }
 
     public Animal getAnimalById(String id){
         return animalRepository.findById(id);
@@ -36,7 +36,7 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     public List<Animal> getAnimalByName(String name) {
-//        return animalRepository.findByName(name);
+        return animalRepository.findByName(name);
         return null;
     }
 
