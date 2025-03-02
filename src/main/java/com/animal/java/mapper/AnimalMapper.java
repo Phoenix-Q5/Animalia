@@ -2,6 +2,8 @@ package com.animal.java.mapper;
 
 import com.animal.java.model.animal.Animal;
 import com.animal.java.model.animal.Image;
+import com.animal.java.utils.CommonConvertor;
+import com.animal.java.utils.TimeUtils;
 import com.animal.jooq.generated.tables.pojos.JAnimal;
 import com.animal.jooq.generated.tables.pojos.JImage;
 import org.springframework.stereotype.Component;
@@ -27,7 +29,7 @@ public class AnimalMapper {
                 .description(jAnimal.getDescription())
                 .family(jAnimal.getFamily())
                 .phylum(jAnimal.getPhylum())
-                .scientificName(jAnimal.getScientificName())
+                .scientificName(jAnimal.getScientificname())
                 .species(jAnimal.getSpecies())
                 .build();
     }
@@ -45,7 +47,7 @@ public class AnimalMapper {
         jAnimal.setGenus(animal.getGenus());
         jAnimal.setPhylum(animal.getPhylum());
         jAnimal.setSpecies(animal.getSpecies());
-        jAnimal.setScientificName(animal.getScientificName());
+        jAnimal.setScientificname(animal.getScientificName());
         return jAnimal;
     }
 
@@ -53,11 +55,16 @@ public class AnimalMapper {
         if (Objects.isNull(jAnimal) && Objects.isNull(jImage)) {
             return null;
         }
-        Image i = new Image().builder()
+        Image i = new Image() {
+            @Override
+            public void displayImageInfo() {
+
+            }
+        }.builder()
                 .id(jImage.getId())
                 .name(jImage.getName())
                 .type(jImage.getType())
-                .imageArray(jImage.getImageArray())
+                .imageArray(jImage.getImagearray())
                 .build();
 
         Animal a = new Animal().builder()
@@ -67,7 +74,7 @@ public class AnimalMapper {
                 .description(jAnimal.getDescription())
                 .family(jAnimal.getFamily())
                 .phylum(jAnimal.getPhylum())
-                .scientificName(jAnimal.getScientificName())
+                .scientificName(jAnimal.getScientificname())
                 .species(jAnimal.getSpecies())
                 .animalImages(List.of(i))
                 .build();
@@ -91,11 +98,17 @@ public class AnimalMapper {
     }
 
     public Image fromJooqImage(JImage jImage) {
-        Image image = new Image();
-        image.setImageArray(jImage.getImageArray());
+        Image image = new Image() {
+            @Override
+            public void displayImageInfo() {
+                System.out.println("Image name: " + getName());
+            }
+        };
+        image.setImageArray(jImage.getImagearray());
         image.setType(jImage.getType());
         image.setId(jImage.getId());
         image.setName(jImage.getName());
+        image.setUploadedAt(CommonConvertor.ZDT_CONVERTOR.from(jImage.getUploadedat()));
         return image;
     }
 
@@ -105,10 +118,11 @@ public class AnimalMapper {
 
     public JImage toJooqImage(Image image){
         JImage jImage = new JImage();
-        jImage.setImageArray(image.getImageArray());
+        jImage.setImagearray(image.getImageArray());
         jImage.setName(image.getName());
         jImage.setType(image.getType());
         jImage.setId(image.getId());
+        jImage.setUploadedat(CommonConvertor.ZDT_CONVERTOR.to(image.getUploadedAt()));
         return jImage;
     }
 
