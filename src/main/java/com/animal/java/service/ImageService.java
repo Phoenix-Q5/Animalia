@@ -1,7 +1,6 @@
 package com.animal.java.service;
 
 import com.animal.java.model.animal.Image;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;

@@ -26,6 +26,7 @@ public class JImage implements Serializable {
     private String type;
     private byte[] imagearray;
     private Timestamp uploadedat;
+    private UUID animalId;
 
     public JImage() {}
 
@@ -35,6 +36,7 @@ public class JImage implements Serializable {
         this.type = value.type;
         this.imagearray = value.imagearray;
         this.uploadedat = value.uploadedat;
+        this.animalId = value.animalId;
     }
 
     public JImage(
@@ -42,13 +44,15 @@ public class JImage implements Serializable {
         String name,
         String type,
         byte[] imagearray,
-        Timestamp uploadedat
+        Timestamp uploadedat,
+        UUID animalId
     ) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.imagearray = imagearray;
         this.uploadedat = uploadedat;
+        this.animalId = animalId;
     }
 
     /**
@@ -125,6 +129,20 @@ public class JImage implements Serializable {
         this.uploadedat = uploadedat;
     }
 
+    /**
+     * Getter for <code>public.image.animal_id</code>.
+     */
+    public UUID getAnimalId() {
+        return this.animalId;
+    }
+
+    /**
+     * Setter for <code>public.image.animal_id</code>.
+     */
+    public void setAnimalId(UUID animalId) {
+        this.animalId = animalId;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -164,6 +182,12 @@ public class JImage implements Serializable {
         }
         else if (!this.uploadedat.equals(other.uploadedat))
             return false;
+        if (this.animalId == null) {
+            if (other.animalId != null)
+                return false;
+        }
+        else if (!this.animalId.equals(other.animalId))
+            return false;
         return true;
     }
 
@@ -176,6 +200,7 @@ public class JImage implements Serializable {
         result = prime * result + ((this.type == null) ? 0 : this.type.hashCode());
         result = prime * result + ((this.imagearray == null) ? 0 : Arrays.hashCode(this.imagearray));
         result = prime * result + ((this.uploadedat == null) ? 0 : this.uploadedat.hashCode());
+        result = prime * result + ((this.animalId == null) ? 0 : this.animalId.hashCode());
         return result;
     }
 
@@ -188,6 +213,7 @@ public class JImage implements Serializable {
         sb.append(", ").append(type);
         sb.append(", ").append("[binary...]");
         sb.append(", ").append(uploadedat);
+        sb.append(", ").append(animalId);
 
         sb.append(")");
         return sb.toString();

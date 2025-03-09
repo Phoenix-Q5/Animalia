@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/images")
 @AllArgsConstructor
+@CrossOrigin("*")
 @Slf4j
 public class ImageController {
 
@@ -37,8 +39,8 @@ public class ImageController {
     }
 
     @PostMapping
-    public ResponseEntity<Image> addImage(@RequestBody Image image){
-        return ResponseEntity.ok(imageService.addImage(image));
+    public ResponseEntity<Image> addImage(@RequestParam("image") MultipartFile file){
+        return ResponseEntity.ok(imageService.addImage(null));
     }
 
     @PostMapping("/batch-insert")

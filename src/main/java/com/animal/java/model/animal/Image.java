@@ -12,7 +12,8 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class Image {
+@Builder
+public class Image {
 
     private UUID id;
 
@@ -23,6 +24,8 @@ public abstract class Image {
     private byte[] imageArray;
 
     protected ZonedDateTime uploadedAt;
+
+    protected UUID animalId;
 
     public Image(String name){
         this.name = name;
@@ -35,5 +38,5 @@ public abstract class Image {
                 .toString();
     }
 
-    public abstract void displayImageInfo();
+//    public abstract void displayImageInfo();
 }

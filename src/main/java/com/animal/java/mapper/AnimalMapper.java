@@ -48,6 +48,8 @@ public class AnimalMapper {
         jAnimal.setPhylum(animal.getPhylum());
         jAnimal.setSpecies(animal.getSpecies());
         jAnimal.setScientificname(animal.getScientificName());
+        jAnimal.setKingdom(animal.getKingdom());
+        jAnimal.setOrder(animal.getOrder());
         return jAnimal;
     }
 
@@ -55,12 +57,7 @@ public class AnimalMapper {
         if (Objects.isNull(jAnimal) && Objects.isNull(jImage)) {
             return null;
         }
-        Image i = new Image() {
-            @Override
-            public void displayImageInfo() {
-
-            }
-        }.builder()
+        Image i = new Image().builder()
                 .id(jImage.getId())
                 .name(jImage.getName())
                 .type(jImage.getType())
@@ -98,12 +95,7 @@ public class AnimalMapper {
     }
 
     public Image fromJooqImage(JImage jImage) {
-        Image image = new Image() {
-            @Override
-            public void displayImageInfo() {
-                System.out.println("Image name: " + getName());
-            }
-        };
+        Image image = new Image();
         image.setImageArray(jImage.getImagearray());
         image.setType(jImage.getType());
         image.setId(jImage.getId());
@@ -118,6 +110,7 @@ public class AnimalMapper {
 
     public JImage toJooqImage(Image image){
         JImage jImage = new JImage();
+        jImage.setAnimalId(image.getAnimalId());
         jImage.setImagearray(image.getImageArray());
         jImage.setName(image.getName());
         jImage.setType(image.getType());

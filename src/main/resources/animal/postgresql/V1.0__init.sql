@@ -55,3 +55,5 @@ CREATE TABLE indexImage (
                             animalId UUID NOT NULL,
                             CONSTRAINT fk_index_image FOREIGN KEY (animalId) REFERENCES Animal(id) ON DELETE CASCADE
 );
+
+ALTER TABLE Image ADD COLUMN  animal_id UUID references  Animal(id) on delete cascade;

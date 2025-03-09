@@ -12,35 +12,18 @@ services:
       - POSTGRES_USER=super
       - POSTGRES_DB=animal
 
-  keycloak-mysql:
-    container_name: keycloak-mysql
-    image: mysql:5.7
+  jenkins:
+    image: jenkins/jenkins:lts
+    restart: always
+    privileged: true
+    user: root
+    ports:
+      - 8083:8080
+      - 50000:50000
+    container_name: jenkins
     volumes:
-      - ./mysql_keycloak_data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: keycloak
-      MYSQL_USER: keycloak
-      MYSQL_PASSWORD: password
-
-  keycloak:
-      container_name: keycloak
-      image: quay.io/keycloak/keycloak:25.0.6
-      command: [ "start-dev", "--import-realm" ]
-      environment:
-        DB_VENDOR: MYSQL
-        DB_ADDR: mysql
-        DB_DATABASE: keycloak
-        DB_USER: keycloak
-        DB_PASSWORD: password
-        KEYCLOAK_ADMIN: admin
-        KEYCLOAK_ADMIN_PASSWORD: admin
-      ports:
-        - "8081:8080"
-      volumes:
-        - ./realms/:/opt/keycloak/data/import/
-      depends_on:
-        - keycloak-mysql
+      - /home/ubuntu/jenkins_compose/jenkins_configuration:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
 
   cache:
     image: redis:6.2-alpine

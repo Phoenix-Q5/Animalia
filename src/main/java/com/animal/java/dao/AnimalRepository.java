@@ -4,17 +4,21 @@ import com.animal.java.annotations.JooqConfiguration;
 import com.animal.java.annotations.TransactionRequired;
 import com.animal.java.mapper.AnimalMapper;
 import com.animal.java.model.animal.Animal;
+import com.animal.java.model.animal.Image;
+import com.animal.jooq.generated.tables.JAnimal;
 import com.animal.jooq.generated.tables.daos.JAnimalDao;
 import com.animal.jooq.generated.tables.daos.JImageDao;
-import com.animal.jooq.generated.tables.pojos.JAnimal;
-import com.animal.jooq.generated.tables.pojos.JImage;
+import org.jooq.Record;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-import static com.animal.jooq.generated.tables.JAnimal.ANIMAL_;
 import static com.animal.jooq.generated.tables.JImage.IMAGE;
 
 @Component
@@ -29,6 +33,8 @@ public class AnimalRepository {
 
     private final AnimalMapper mapper;
 
+    private final JAnimal ANIMAL_ = JAnimal.ANIMAL;
+
     private final ImageRepository imageRepository;
 
     public AnimalRepository(@JooqConfiguration DefaultConfiguration create, ImageRepository imageRepository, AnimalMapper mapper){
@@ -40,20 +46,36 @@ public class AnimalRepository {
     }
 
     public List<Animal> findAll(){
-       return mapper.fullAnimal(dsl.select(ANIMAL_.fields()).from(ANIMAL_).fetchInto(JAnimal.class),
-                dsl.select(IMAGE.fields()).from(IMAGE).fetchInto(JImage.class));
+        return dsl.selectFrom(ANIMAL_).fetchInto(Animal.class);
     }
 
+    public Animal getById(UUID id){
+        List<Record> records = dsl.select()
+                .from(ANIMAL_)
+                .leftJoin(IMAGE).on(IMAGE.ANIMAL_ID.eq(ANIMAL_.ID))
+                .where(ANIMAL_.ID.eq(id))
+                .fetch();
 
-    public Animal findById(String keyword){
-        JAnimal a = animalDao.findById(keyword);
-        JImage i = imageDao.findById(a.getImageId());
-        return mapper.fullAnimal(a,i);
-    }
+        if(records.isEmpty()) return null;
 
-    public Animal save(Animal animal){
-        animalDao.insert(mapper.toJooq(animal));
-        imageDao.insert(mapper.toJooqImage(animal.getAnimalImages().stream().findFirst().orElse(null)));
+        Record record = records.get(0);
+        Animal animal = record.into(Animal.class);
+
+        List<Image> images = records.stream()
+                .filter(r -> r.get(IMAGE.ID) != null)
+                .map(r -> r.into(Image.class))
+                .collect(Collectors.toUnmodifiableList());
+
+        animal.setAnimalImages(images);
         return animal;
+    }
+
+    public Animal addAnimal(Animal animal){
+        animalDao.insert(mapper.toJooq(animal));
+        return animal;
+    }
+
+    public void deleteAnimalById(UUID id){
+        dsl.deleteFrom(ANIMAL_).where(ANIMAL_.ID.eq(id)).execute();
     }
 }

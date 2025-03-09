@@ -48,8 +48,16 @@ public class ImageRepository {
         return image;
     }
 
+    public Image addImageByAnimalId(UUID animalId, Image image){
+        image.setAnimalId(animalId);
+        imageDao.insert(mapper.toJooqImage(image));
+        return image;
+    }
+
     public List<Image> addImages(List<Image> images){
-        imageDao.insert(images.stream().map(mapper::toJooqImage).toList());
+        images.forEach(i -> i.setId(UUID.randomUUID()));
+        imageDao.insert(images.stream()
+                .map(mapper::toJooqImage).toList());
         return images;
     }
 

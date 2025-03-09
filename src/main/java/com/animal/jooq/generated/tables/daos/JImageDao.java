@@ -129,4 +129,19 @@ public class JImageDao extends DAOImpl<JImageRecord, com.animal.jooq.generated.t
     public List<com.animal.jooq.generated.tables.pojos.JImage> fetchByJUploadedat(Timestamp... values) {
         return fetch(JImage.IMAGE.UPLOADEDAT, values);
     }
+
+    /**
+     * Fetch records that have <code>animal_id BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.animal.jooq.generated.tables.pojos.JImage> fetchRangeOfJAnimalId(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(JImage.IMAGE.ANIMAL_ID, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>animal_id IN (values)</code>
+     */
+    public List<com.animal.jooq.generated.tables.pojos.JImage> fetchByJAnimalId(UUID... values) {
+        return fetch(JImage.IMAGE.ANIMAL_ID, values);
+    }
 }

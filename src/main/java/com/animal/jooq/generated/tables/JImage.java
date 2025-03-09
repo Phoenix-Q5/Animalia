@@ -9,16 +9,18 @@ import com.animal.jooq.generated.Keys;
 import com.animal.jooq.generated.tables.records.JImageRecord;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function5;
+import org.jooq.Function6;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row5;
+import org.jooq.Row6;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -76,6 +78,11 @@ public class JImage extends TableImpl<JImageRecord> {
      */
     public final TableField<JImageRecord, Timestamp> UPLOADEDAT = createField(DSL.name("uploadedat"), SQLDataType.TIMESTAMP(6).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP"), SQLDataType.TIMESTAMP)), this, "");
 
+    /**
+     * The column <code>public.image.animal_id</code>.
+     */
+    public final TableField<JImageRecord, UUID> ANIMAL_ID = createField(DSL.name("animal_id"), SQLDataType.UUID, this, "");
+
     private JImage(Name alias, Table<JImageRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -120,6 +127,23 @@ public class JImage extends TableImpl<JImageRecord> {
     }
 
     @Override
+    public List<ForeignKey<JImageRecord, ?>> getReferences() {
+        return Arrays.asList(Keys.IMAGE__IMAGE_ANIMAL_ID_FKEY);
+    }
+
+    private transient JAnimal _animal;
+
+    /**
+     * Get the implicit join path to the <code>public.animal</code> table.
+     */
+    public JAnimal animal() {
+        if (_animal == null)
+            _animal = new JAnimal(this, Keys.IMAGE__IMAGE_ANIMAL_ID_FKEY);
+
+        return _animal;
+    }
+
+    @Override
     public JImage as(String alias) {
         return new JImage(DSL.name(alias), this);
     }
@@ -159,18 +183,18 @@ public class JImage extends TableImpl<JImageRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row5 type methods
+    // Row6 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<UUID, String, String, byte[], Timestamp> fieldsRow() {
-        return (Row5) super.fieldsRow();
+    public Row6<UUID, String, String, byte[], Timestamp, UUID> fieldsRow() {
+        return (Row6) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function5<? super UUID, ? super String, ? super String, ? super byte[], ? super Timestamp, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function6<? super UUID, ? super String, ? super String, ? super byte[], ? super Timestamp, ? super UUID, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -178,7 +202,7 @@ public class JImage extends TableImpl<JImageRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function5<? super UUID, ? super String, ? super String, ? super byte[], ? super Timestamp, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function6<? super UUID, ? super String, ? super String, ? super byte[], ? super Timestamp, ? super UUID, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }
