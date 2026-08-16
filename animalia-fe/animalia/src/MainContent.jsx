@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import logo from './assets/animalia-logo-full.png'
 import AnimalCard from './AnimalCard';
 import AnimalDetails from './AnimalDetails';
+import { useKeycloak } from '@react-keycloak/web';
+import { hasAdminRole } from './keycloak';
 
 const images = [
     'bluefrog.jpg',
@@ -16,6 +18,7 @@ const images = [
 ];
 
 function MainContent() {
+    const { keycloak, initialized } = useKeycloak();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [fade, setFade] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -97,6 +100,23 @@ function MainContent() {
                                     <li><a href="#">Gallery</a></li>
                                     <li><a href="#">Conservation</a></li>
                                     <li><a href="#">About</a></li>
+                                    {initialized && hasAdminRole(keycloak) && (
+                                        <li><a href="/add-animal">Add Animal</a></li>
+                                    )}
+                                    {initialized && !keycloak.authenticated && (
+                                        <li>
+                                            <a href="#login" onClick={(e) => { e.preventDefault(); keycloak.login(); }}>
+                                                Sign in
+                                            </a>
+                                        </li>
+                                    )}
+                                    {initialized && keycloak.authenticated && (
+                                        <li>
+                                            <a href="#logout" onClick={(e) => { e.preventDefault(); keycloak.logout({ redirectUri: window.location.origin }); }}>
+                                                Sign out
+                                            </a>
+                                        </li>
+                                    )}
                                 </ul>
                             </nav>
                         </header>

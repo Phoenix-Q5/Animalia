@@ -11,5 +11,13 @@ public interface AnimalValidationObject extends ValidationObject {
 
     String getScientificName();
 
+    String getName();
+
+    String getPhylum();
+
+    String getFamily();
+
+    String getKingdom();
+
     List<Image> getImages();
 }

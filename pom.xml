@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.30</version>
+			<version>1.18.46</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -111,7 +111,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -147,6 +147,16 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
 			<version>4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.10.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.5</version>
 		</dependency>
 <!--		<dependency>-->
 <!--			<groupId>org.springframework.boot</groupId>-->
@@ -214,6 +224,13 @@
 				<groupId>org.jooq</groupId>
 				<artifactId>jooq-codegen-maven</artifactId>
 				<version>${jooq.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.postgresql</groupId>
+						<artifactId>postgresql</artifactId>
+						<version>${postgresql.version}</version>
+					</dependency>
+				</dependencies>
 				<executions>
 					<execution>
 						<goals>
@@ -236,7 +253,8 @@
 						<database>
 							<name>org.jooq.meta.postgres.PostgresDatabase</name>
 							<inputSchema>public</inputSchema>
-							<includes>.*</includes>
+							<includes>animal|animalextendedinfo|animalinfo|galleryimage|image|indeximage</includes>
+							<includeRoutines>false</includeRoutines>
 							<forcedTypes>
 								<forcedType>
 									<name>UUID</name>
@@ -254,6 +272,7 @@
 							<daos>true</daos>
 							<relations>true</relations>
 							<records>true</records>
+							<routines>false</routines>
 							<validationAnnotations>true</validationAnnotations>
 							<javaTimeTypes>false</javaTimeTypes>
 							<deprecated>false</deprecated>

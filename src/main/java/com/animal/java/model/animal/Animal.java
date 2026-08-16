@@ -1,5 +1,6 @@
 package com.animal.java.model.animal;
 
+import com.animal.java.validation.extension.AnimalValidationObject;
 import lombok.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -7,7 +8,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Getter
@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Animal {
+public class Animal implements AnimalValidationObject {
 
     private UUID id;
 
@@ -42,6 +42,19 @@ public class Animal {
     private AnimalInfo animalInfo;
 
     private List<Image> animalImages;
+
+    @Override
+    public String getObjectId() {
+        if (id != null) {
+            return id.toString();
+        }
+        return name != null ? name : "animal";
+    }
+
+    @Override
+    public List<Image> getImages() {
+        return animalImages;
+    }
 
     @Override
     public boolean equals(Object o){

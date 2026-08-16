@@ -3,9 +3,9 @@ package com.animal.java.controller;
 import com.animal.java.model.animal.Animal;
 import com.animal.java.model.animal.Image;
 import com.animal.java.model.enumConstants.*;
+import com.animal.java.service.AnimalBulkImportService;
 import com.animal.java.service.AnimalService;
 import com.animal.java.service.ImageService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +26,8 @@ public class AnimalController {
 
     private final ImageService imageService;
 
+    private final AnimalBulkImportService animalBulkImportService;
+
 
     @GetMapping("/getAllAnimals")
     public List<Animal> getAllAnimals(){
@@ -37,10 +39,24 @@ public class AnimalController {
         return animalService.insertAnimal(animal);
     }
 
-    @PostMapping(value = "/addCompleteAnimal", consumes = "multipart/form-data")
+    @PostMapping(value = {"/addCompleteAnimal", "/admin/addCompleteAnimal"}, consumes = "multipart/form-data")
     public ResponseEntity<?> addAnimalComplete(@RequestPart("animal") Animal animal, @RequestParam("image") MultipartFile file){
         Animal animalToSave = animalService.insertAnimal(animal, file);
         return ResponseEntity.ok(animalToSave);
+    }
+
+    @PostMapping(value = "/admin/bulkImport", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> bulkImport(@RequestParam("file") MultipartFile file){
+        return ResponseEntity.ok(animalBulkImportService.importAnimals(file));
+    }
+
+    @GetMapping("/admin/bulkTemplate")
+    public ResponseEntity<byte[]> bulkTemplate(){
+        byte[] template = animalBulkImportService.canonicalTemplate();
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=\"animalia-bulk-template.csv\"")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(template);
     }
 
     @GetMapping("/getImage/{id}")

@@ -6,4 +6,11 @@ const keycloak = new Keycloak({
   clientId: 'animalia-dev'
 });
 
+export const hasAdminRole = (authClient) =>
+  Boolean(authClient?.authenticated) &&
+  (authClient.hasRealmRole('admin') ||
+    authClient.hasRealmRole('ADMIN') ||
+    authClient.hasResourceRole('admin', 'animalia-dev') ||
+    authClient.hasResourceRole('ADMIN', 'animalia-dev'));
+
 export default keycloak;

@@ -45,7 +45,7 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     public List<Animal> insertAnimals(List<Animal> animals) {
-        return List.of();
+        return animals.stream().map(this::insertAnimal).toList();
     }
 
     @Override

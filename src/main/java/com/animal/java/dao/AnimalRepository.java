@@ -78,4 +78,12 @@ public class AnimalRepository {
     public void deleteAnimalById(UUID id){
         dsl.deleteFrom(ANIMAL_).where(ANIMAL_.ID.eq(id)).execute();
     }
+
+    public boolean existsByName(String name){
+        return dsl.fetchExists(dsl.selectFrom(ANIMAL_).where(ANIMAL_.NAME.equalIgnoreCase(name)));
+    }
+
+    public boolean existsByScientificName(String scientificName){
+        return dsl.fetchExists(dsl.selectFrom(ANIMAL_).where(ANIMAL_.SCIENTIFICNAME.equalIgnoreCase(scientificName)));
+    }
 }

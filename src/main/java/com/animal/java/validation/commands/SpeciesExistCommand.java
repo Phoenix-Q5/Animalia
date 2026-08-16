@@ -18,8 +18,9 @@ import com.animal.java.validation.pipeline.context.AnimalValidationObjectContext
 public class SpeciesExistCommand extends AnimalValidationCommand {
         @Override
         protected void validate(AnimalValidationObject object, AnimalValidationObjectContext ctx, ValidationResult result) {
-                if(ctx.getSpecies() == null) {
-                        result.getNotifications().add(buildNotification(object.getObjectId(), null, ValidationMessage.SPECIES_NOT_EMPTY));
+                String species = ctx.getSpecies() != null ? ctx.getSpecies() : object.getSpecies();
+                if(species == null || species.isBlank()) {
+                        result.getNotifications().add(buildNotification(object.getObjectId(), "species", ValidationMessage.SPECIES_NOT_EMPTY));
                 }
         }
 }

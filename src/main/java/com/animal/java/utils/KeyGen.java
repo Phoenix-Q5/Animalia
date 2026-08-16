@@ -20,29 +20,29 @@ public class KeyGen {
         out.write("\n");
     }
 
-    public static void main(String[] args) throws Exception {
-        int keySize = 2048;
-        String outFile = "app";
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-
-        keyPairGenerator.initialize(keySize);
-        KeyPair kp = keyPairGenerator.generateKeyPair();
-
-        try (Writer out = (outFile != null) ? new FileWriter(outFile + ".key") : new OutputStreamWriter(System.out)) {
-            log.info("Private key format: " + kp.getPrivate().getFormat());
-            out.write("-----BEGIN PRIVATE KEY-----\n");
-            writeBase64(out, kp.getPrivate());
-            out.write("-----END PRIVATE KEY-----\n");
-
-            if (outFile != null) {
-                out.close();
-                try (Writer pubOut = new FileWriter(outFile + ".pub")) {
-                    log.info("Public key format: " + kp.getPublic().getFormat());
-                    pubOut.write("-----BEGIN PUBLIC KEY-----\n");
-                    writeBase64(pubOut, kp.getPublic());
-                    pubOut.write("-----END PUBLIC KEY-----\n");
-                }
-            }
-        }
-    }
+//    public static void main(String[] args) throws Exception {
+//        int keySize = 2048;
+//        String outFile = "app";
+//        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+//
+//        keyPairGenerator.initialize(keySize);
+//        KeyPair kp = keyPairGenerator.generateKeyPair();
+//
+//        try (Writer out = (outFile != null) ? new FileWriter(outFile + ".key") : new OutputStreamWriter(System.out)) {
+//            log.info("Private key format: " + kp.getPrivate().getFormat());
+//            out.write("-----BEGIN PRIVATE KEY-----\n");
+//            writeBase64(out, kp.getPrivate());
+//            out.write("-----END PRIVATE KEY-----\n");
+//
+//            if (outFile != null) {
+//                out.close();
+//                try (Writer pubOut = new FileWriter(outFile + ".pub")) {
+//                    log.info("Public key format: " + kp.getPublic().getFormat());
+//                    pubOut.write("-----BEGIN PUBLIC KEY-----\n");
+//                    writeBase64(pubOut, kp.getPublic());
+//                    pubOut.write("-----END PUBLIC KEY-----\n");
+//                }
+//            }
+//        }
+//    }
 }
