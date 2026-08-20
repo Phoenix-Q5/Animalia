@@ -1,16 +1,13 @@
 package com.animal.java.service.impl;
 
 import com.animal.java.dao.ImageRepository;
-import com.animal.java.exception.AnimaliaException;
 import com.animal.java.model.animal.Image;
+import com.animal.java.service.CloudinaryStorageService;
 import com.animal.java.service.ImageService;
-import com.animal.java.utils.RandomUtils;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,81 +16,58 @@ import java.util.UUID;
 public class ImageServiceImpl implements ImageService {
 
     private final ImageRepository imageRepository;
-
-//    @Transactional
-//    public Image uploadImage(MultipartFile file){
-//        try {
-//          return imageRepository.save(Image.builder()
-//                          .id(Long.valueOf(RandomUtils.getNumberReqLength(5)))
-//                    .name(file.getOriginalFilename())
-//                    .type(file.getContentType())
-//                    .imageArray(file.getBytes()).build());
-//        }
-//        catch (IOException e){
-//            throw new AnimaliaException("Failed to upload image", e);
-//        }
-//    }
-//
-//    @Transactional
-//    public Image getInfoByImageById(Long name) {
-//        Image dbImage = imageRepository.findById(name);
-//
-//        return Image.builder()
-//                .name(dbImage.getName())
-//                .type(dbImage.getType())
-//                .imageArray(dbImage.getImageArray()).build();
-//
-//    }
-//
-//    @Transactional
-//    public byte[] getImage(Long id) {
-//        Image dbImage = imageRepository.findById(id);
-//        byte[] image = dbImage.getImageArray();
-//        return image;
-//    }
+    private final CloudinaryStorageService cloudinaryStorageService;
 
     @Override
     public Image getById(UUID id) {
-        return null;
+        return imageRepository.getById(id);
     }
 
     @Override
     public List<Image> getByType(String type) {
-        return List.of();
+        return imageRepository.getByType(type);
     }
 
     @Override
     public List<Image> getAllImages() {
-        return List.of();
+        return imageRepository.getAllImages();
     }
 
     @Override
     public Image addImage(Image image) {
-        return null;
+        if (image != null && image.hasCdnUrl() && image.getId() == null) {
+            image = cloudinaryStorageService.fromUrl(image.getUrl(), image.getName());
+        }
+        return imageRepository.addImage(image);
+    }
+
+    public Image uploadImage(MultipartFile file) {
+        Image uploaded = cloudinaryStorageService.upload(file, "animalia/uploads");
+        return imageRepository.addImage(uploaded);
     }
 
     @Override
     public List<Image> addImages(List<Image> images) {
-        return List.of();
+        return imageRepository.addImages(images);
     }
 
     @Override
     public Image updateImage(UUID id, Image image) {
-        return null;
+        return imageRepository.updateImage(id, image);
     }
 
     @Override
     public List<Image> updateImages(List<Image> images) {
-        return List.of();
+        return imageRepository.updateImages(images);
     }
 
     @Override
     public void deleteImage(UUID id) {
-
+        imageRepository.deleteImage(id);
     }
 
     @Override
     public void deleteImages(List<UUID> ids) {
-
+        imageRepository.deleteImages(ids);
     }
 }

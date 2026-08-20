@@ -1,18 +1,28 @@
 package com.animal.java.model.info;
 
-import java.util.Set;
+import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class Habits {
 
-    private String id;
-
-    private String animalId;
-
+    private UUID id;
+    private UUID animalId;
     private String description;
 
-    private Set<String> groupName;
+    @Builder.Default
+    private Set<String> groupName = new HashSet<>();
 
-    private Set<String> lifestyle;
+    @Builder.Default
+    private Set<String> lifestyle = new HashSet<>();
 
     private String seasonality;
 }

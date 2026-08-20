@@ -7,6 +7,7 @@ import com.animal.java.service.ImageService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,38 +35,43 @@ public class ImageController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Image>> getAllImages(){
+    public ResponseEntity<List<Image>> getAllImages() {
         return ResponseEntity.ok(imageService.getAllImages());
     }
 
-    @PostMapping
-    public ResponseEntity<Image> addImage(@RequestParam("image") MultipartFile file){
-        return ResponseEntity.ok(imageService.addImage(null));
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Image> uploadImage(@RequestParam("image") MultipartFile file) {
+        return ResponseEntity.ok(imageService.uploadImage(file));
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Image> addImageByUrl(@RequestBody Image body) {
+        return ResponseEntity.ok(imageService.addImage(body));
     }
 
     @PostMapping("/batch-insert")
-    public ResponseEntity<List<Image>> addImages(@RequestBody List<Image> images){
+    public ResponseEntity<List<Image>> addImages(@RequestBody List<Image> images) {
         return ResponseEntity.ok(imageService.addImages(images));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Image> updateImage(@PathVariable UUID id, @RequestBody Image image){
+    public ResponseEntity<Image> updateImage(@PathVariable UUID id, @RequestBody Image image) {
         return ResponseEntity.ok(imageService.updateImage(id, image));
     }
 
     @PutMapping("/batch-update")
-    public ResponseEntity<List<Image>> updateImages(@RequestBody List<Image> images){
+    public ResponseEntity<List<Image>> updateImages(@RequestBody List<Image> images) {
         return ResponseEntity.ok(imageService.updateImages(images));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteImage(@PathVariable UUID id){
+    public ResponseEntity<Void> deleteImage(@PathVariable UUID id) {
         imageService.deleteImage(id);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/batch-delete")
-    public ResponseEntity<Void> deleteImages(@RequestBody List<UUID> ids){
+    public ResponseEntity<Void> deleteImages(@RequestBody List<UUID> ids) {
         imageService.deleteImages(ids);
         return ResponseEntity.ok().build();
     }

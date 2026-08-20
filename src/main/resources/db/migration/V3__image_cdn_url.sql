@@ -1,0 +1,5 @@
+-- Prefer CDN URLs over BYTEA for new images
+ALTER TABLE image ADD COLUMN IF NOT EXISTS url VARCHAR(2048);
+ALTER TABLE image ADD COLUMN IF NOT EXISTS cloudinary_public_id VARCHAR(512);
+
+ALTER TABLE image ALTER COLUMN imagearray DROP NOT NULL;

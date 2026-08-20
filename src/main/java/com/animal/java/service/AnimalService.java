@@ -12,15 +12,32 @@ public interface AnimalService {
 
     List<Animal> getAllAnimals();
 
+    List<Animal> getBrowseAnimals();
+
     Animal insertAnimal(Animal animal);
 
     Animal insertAnimal(Animal animal, MultipartFile file);
+
+    Animal insertAnimal(
+            Animal animal,
+            MultipartFile[] animalImageFiles,
+            MultipartFile distributionMap,
+            MultipartFile[] appearanceImages
+    );
 
     List<Animal> insertAnimals(List<Animal> animals);
 
     List<Animal> updateAnimals(List<Animal> animals);
 
     Animal updateAnimal(UUID id, Animal animal);
+
+    Animal updateAnimal(
+            UUID id,
+            Animal animal,
+            MultipartFile[] animalImageFiles,
+            MultipartFile distributionMap,
+            MultipartFile[] appearanceImages
+    );
 
     Animal getAnimalById(UUID id);
 
@@ -37,6 +54,8 @@ public interface AnimalService {
     List<Animal> getAnimalByFamily(String family);
 
     List<Animal> getAnimalByKingdom (String kingdom);
+
+    List<Animal> getRelatedAnimals(UUID id);
 
     void deleteAnimal(UUID id);
 

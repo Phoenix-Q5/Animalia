@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useKeycloak } from '@react-keycloak/web';
 import { hasAdminRole } from './keycloak';
 
 function AdminRoute({ children }) {
   const { keycloak, initialized } = useKeycloak();
+  const location = useLocation();
 
   useEffect(() => {
     if (initialized && !keycloak.authenticated) {
-      keycloak.login({ redirectUri: window.location.origin + '/add-animal' });
+      keycloak.login({ redirectUri: window.location.origin + location.pathname });
     }
-  }, [initialized, keycloak]);
+  }, [initialized, keycloak, location.pathname]);
 
   if (!initialized) {
     return (
@@ -35,7 +37,7 @@ function AdminRoute({ children }) {
         <div className="add-animal-bg" aria-hidden="true"></div>
         <div className="add-animal-denied">
           <h1>Access denied</h1>
-          <p>The add animal page is available to administrators only.</p>
+          <p>This catalog action is available to administrators only.</p>
         </div>
       </div>
     );

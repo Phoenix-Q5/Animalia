@@ -33,16 +33,51 @@ public class AnimalController {
     public List<Animal> getAllAnimals(){
         return animalService.getAllAnimals();
     }
+
+    @GetMapping("/getBrowseAnimals")
+    public List<Animal> getBrowseAnimals() {
+        return animalService.getBrowseAnimals();
+    }
 //
     @PostMapping("/addAnimal")
     public Animal addAnimal(@RequestBody Animal animal){
         return animalService.insertAnimal(animal);
     }
 
-    @PostMapping(value = {"/addCompleteAnimal", "/admin/addCompleteAnimal"}, consumes = "multipart/form-data")
-    public ResponseEntity<?> addAnimalComplete(@RequestPart("animal") Animal animal, @RequestParam("image") MultipartFile file){
-        Animal animalToSave = animalService.insertAnimal(animal, file);
+    @PostMapping(value = {"/addCompleteAnimal", "/admin/addCompleteAnimal"}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> addAnimalComplete(
+            @RequestPart("animal") Animal animal,
+            @RequestParam(value = "animalImages", required = false) MultipartFile[] animalImages,
+            @RequestParam(value = "distributionMap", required = false) MultipartFile distributionMap,
+            @RequestParam(value = "appearanceImages", required = false) MultipartFile[] appearanceImages,
+            @RequestParam(value = "image", required = false) MultipartFile legacyImage
+    ) {
+        MultipartFile[] files = animalImages;
+        if ((files == null || files.length == 0) && legacyImage != null && !legacyImage.isEmpty()) {
+            files = new MultipartFile[]{legacyImage};
+        }
+        Animal animalToSave = animalService.insertAnimal(animal, files, distributionMap, appearanceImages);
         return ResponseEntity.ok(animalToSave);
+    }
+
+    @PutMapping(value = "/admin/updateCompleteAnimal/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateAnimalComplete(
+            @PathVariable("id") UUID id,
+            @RequestPart("animal") Animal animal,
+            @RequestParam(value = "animalImages", required = false) MultipartFile[] animalImages,
+            @RequestParam(value = "distributionMap", required = false) MultipartFile distributionMap,
+            @RequestParam(value = "appearanceImages", required = false) MultipartFile[] appearanceImages,
+            @RequestParam(value = "image", required = false) MultipartFile legacyImage
+    ) {
+        MultipartFile[] files = animalImages;
+        if ((files == null || files.length == 0) && legacyImage != null && !legacyImage.isEmpty()) {
+            files = new MultipartFile[]{legacyImage};
+        }
+        Animal updated = animalService.updateAnimal(id, animal, files, distributionMap, appearanceImages);
+        if (updated == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updated);
     }
 
     @PostMapping(value = "/admin/bulkImport", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -72,9 +107,30 @@ public class AnimalController {
         return animalService.getAnimalById(id);
     }
 
+    @GetMapping("/getById/{id}/related")
+    public List<Animal> getRelatedAnimals(@PathVariable("id") UUID id){
+        return animalService.getRelatedAnimals(id);
+    }
+
     @GetMapping("/getByName/{name}")
     public List<Animal> getAnimalsByName(@PathVariable("name") String name){
         return animalService.getAnimalByName(name);
+    }
+
+    @GetMapping("/getConservationStatuses")
+    public Map<String, Object> getConservationStatuses(){
+        Map<String, Object> statuses = new LinkedHashMap<>();
+        Arrays.stream(VulnerabilityStatus.values()).forEach(status -> {
+            Map<String, Object> details = new LinkedHashMap<>();
+            details.put("code", status.getId());
+            details.put("name", status.getName());
+            details.put("iconKey", status.getIconKey());
+            details.put("threatened", status.isThreatened());
+            details.put("extinct", status.isExtinct());
+            details.put("lowerRisk", status.isLowerRisk());
+            statuses.put(status.getId(), details);
+        });
+        return statuses;
     }
 
     @PostMapping("/addImage")

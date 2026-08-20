@@ -7,7 +7,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,22 +20,31 @@ public class Image {
 
     private String type;
 
+    /** Legacy binary storage; prefer {@link #url} for CDN-hosted images. */
     private byte[] imageArray;
+
+    /** Public CDN URL (e.g. Cloudinary secure_url). */
+    private String url;
+
+    private String cloudinaryPublicId;
 
     protected ZonedDateTime uploadedAt;
 
     protected UUID animalId;
 
-    public Image(String name){
+    public Image(String name) {
         this.name = name;
     }
 
-    @Override
-    public String toString(){
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("name", name)
-                .toString();
+    public boolean hasCdnUrl() {
+        return url != null && !url.isBlank();
     }
 
-//    public abstract void displayImageInfo();
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("name", name)
+                .append("url", url)
+                .toString();
+    }
 }

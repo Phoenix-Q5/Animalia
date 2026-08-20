@@ -15,11 +15,11 @@ import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function10;
+import org.jooq.Function13;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row10;
+import org.jooq.Row13;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -101,6 +101,21 @@ public class JAnimal extends TableImpl<JAnimalRecord> {
      * The column <code>public.animal.kingdom</code>.
      */
     public final TableField<JAnimalRecord, String> KINGDOM = createField(DSL.name("kingdom"), SQLDataType.VARCHAR(255), this, "");
+
+    /**
+     * The column <code>public.animal.subphylum</code>.
+     */
+    public final TableField<JAnimalRecord, String> SUBPHYLUM = createField(DSL.name("subphylum"), SQLDataType.VARCHAR(255), this, "");
+
+    /**
+     * The column <code>public.animal.animal_class</code>.
+     */
+    public final TableField<JAnimalRecord, String> ANIMAL_CLASS = createField(DSL.name("animal_class"), SQLDataType.VARCHAR(255), this, "");
+
+    /**
+     * The column <code>public.animal.suborder</code>.
+     */
+    public final TableField<JAnimalRecord, String> SUBORDER = createField(DSL.name("suborder"), SQLDataType.VARCHAR(255), this, "");
 
     private JAnimal(Name alias, Table<JAnimalRecord> aliased) {
         this(alias, aliased, null);
@@ -190,18 +205,18 @@ public class JAnimal extends TableImpl<JAnimalRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row10 type methods
+    // Row13 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row10<UUID, String, String, String, String, String, String, String, String, String> fieldsRow() {
-        return (Row10) super.fieldsRow();
+    public Row13<UUID, String, String, String, String, String, String, String, String, String, String, String, String> fieldsRow() {
+        return (Row13) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function10<? super UUID, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function13<? super UUID, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -209,7 +224,7 @@ public class JAnimal extends TableImpl<JAnimalRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function10<? super UUID, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function13<? super UUID, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

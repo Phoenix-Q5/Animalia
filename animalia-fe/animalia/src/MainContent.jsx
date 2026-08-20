@@ -62,8 +62,8 @@ function MainContent() {
         }
     };
 
-    const handleAnimalClick = (id) => {
-        fetch(`/api/v1/animals/getById/${id}`)
+    const handleAnimalClick = (animalId) => {
+        fetch(`/api/v1/animals/getById/${animalId}`)
             .then(response => response.json())
             .then(data => setSelectedAnimal(data))
             .catch(error => console.error('Error fetching animal details:', error));

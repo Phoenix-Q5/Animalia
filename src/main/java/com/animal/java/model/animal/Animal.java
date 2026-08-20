@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,29 +20,37 @@ public class Animal implements AnimalValidationObject {
 
     private UUID id;
 
+    private String kingdom;
     private String phylum;
-
+    private String subphylum;
+    private String animalClass;
+    private String order;
+    private String suborder;
     private String family;
-
-    private String name;
-
-    private String scientificName;
-
-    private String description;
-
     private String genus;
-
     private String species;
 
-    private String order;
-
-    private String kingdom;
+    private String name;
+    private String scientificName;
+    private String description;
 
     private AnimalExtendedInfo animalExtendedInfo;
-
     private AnimalInfo animalInfo;
 
-    private List<Image> animalImages;
+    @Builder.Default
+    private List<Image> animalImages = new ArrayList<>();
+
+    @Builder.Default
+    private List<GalleryImage> galleryImages = new ArrayList<>();
+
+    @Builder.Default
+    private List<Subspecies> subspecies = new ArrayList<>();
+
+    @Builder.Default
+    private List<AnimalReference> references = new ArrayList<>();
+
+    @Builder.Default
+    private List<Animal> relatedAnimals = new ArrayList<>();
 
     @Override
     public String getObjectId() {
@@ -57,17 +66,16 @@ public class Animal implements AnimalValidationObject {
     }
 
     @Override
-    public boolean equals(Object o){
-        if(this == o){
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-
-        if(o == null || getClass() != o.getClass()){
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         Animal that = (Animal) o;
-        return new EqualsBuilder().append(getName(), that.getName())
+        return new EqualsBuilder()
+                .append(getName(), that.getName())
                 .append(getPhylum(), that.getPhylum())
                 .append(getSpecies(), that.getSpecies())
                 .append(getFamily(), that.getFamily())
@@ -76,12 +84,16 @@ public class Animal implements AnimalValidationObject {
                 .append(getDescription(), that.getDescription())
                 .append(getOrder(), that.getOrder())
                 .append(getKingdom(), that.getKingdom())
+                .append(getSubphylum(), that.getSubphylum())
+                .append(getAnimalClass(), that.getAnimalClass())
+                .append(getSuborder(), that.getSuborder())
                 .isEquals();
     }
 
     @Override
-    public int hashCode(){
-        return new HashCodeBuilder().append(name)
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(name)
                 .append(phylum)
                 .append(species)
                 .append(family)
@@ -90,11 +102,14 @@ public class Animal implements AnimalValidationObject {
                 .append(description)
                 .append(order)
                 .append(kingdom)
+                .append(subphylum)
+                .append(animalClass)
+                .append(suborder)
                 .toHashCode();
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("name", name)
                 .append("phylum", phylum)
@@ -105,6 +120,9 @@ public class Animal implements AnimalValidationObject {
                 .append("description", description)
                 .append("order", order)
                 .append("kingdom", kingdom)
+                .append("subphylum", subphylum)
+                .append("animalClass", animalClass)
+                .append("suborder", suborder)
                 .toString();
     }
 }

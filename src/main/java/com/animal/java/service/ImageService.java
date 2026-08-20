@@ -2,6 +2,8 @@ package com.animal.java.service;
 
 import com.animal.java.model.animal.Image;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -14,6 +16,8 @@ public interface ImageService {
     List<Image> getAllImages();
 
     Image addImage(Image image);
+
+    Image uploadImage(MultipartFile file);
 
     List<Image> addImages(List<Image> images);
 

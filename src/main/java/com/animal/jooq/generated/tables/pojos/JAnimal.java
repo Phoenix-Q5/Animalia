@@ -29,6 +29,9 @@ public class JAnimal implements Serializable {
     private String species;
     private String order;
     private String kingdom;
+    private String subphylum;
+    private String animalClass;
+    private String suborder;
 
     public JAnimal() {}
 
@@ -43,6 +46,9 @@ public class JAnimal implements Serializable {
         this.species = value.species;
         this.order = value.order;
         this.kingdom = value.kingdom;
+        this.subphylum = value.subphylum;
+        this.animalClass = value.animalClass;
+        this.suborder = value.suborder;
     }
 
     public JAnimal(
@@ -219,6 +225,51 @@ public class JAnimal implements Serializable {
      */
     public void setKingdom(String kingdom) {
         this.kingdom = kingdom;
+    }
+
+    /**
+     * Getter for <code>public.animal.subphylum</code>.
+     */
+    @Size(max = 255)
+    public String getSubphylum() {
+        return this.subphylum;
+    }
+
+    /**
+     * Setter for <code>public.animal.subphylum</code>.
+     */
+    public void setSubphylum(String subphylum) {
+        this.subphylum = subphylum;
+    }
+
+    /**
+     * Getter for <code>public.animal.animal_class</code>.
+     */
+    @Size(max = 255)
+    public String getAnimalClass() {
+        return this.animalClass;
+    }
+
+    /**
+     * Setter for <code>public.animal.animal_class</code>.
+     */
+    public void setAnimalClass(String animalClass) {
+        this.animalClass = animalClass;
+    }
+
+    /**
+     * Getter for <code>public.animal.suborder</code>.
+     */
+    @Size(max = 255)
+    public String getSuborder() {
+        return this.suborder;
+    }
+
+    /**
+     * Setter for <code>public.animal.suborder</code>.
+     */
+    public void setSuborder(String suborder) {
+        this.suborder = suborder;
     }
 
     @Override

@@ -2,10 +2,8 @@ package com.animal.java.model.enumConstants;
 
 import com.animal.java.utils.EnumId;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public enum Classification implements EnumId {
 
     CA("Carnivore"),
@@ -27,7 +25,6 @@ public enum Classification implements EnumId {
     MY("Mycophage"),
     LI("Lignivore"),
 
-    // Activity Patterns
     DI("Diurnal"),
     NO("Nocturnal"),
     CR("Crepuscular"),
@@ -35,7 +32,6 @@ public enum Classification implements EnumId {
     VE("Vespertine"),
     CAE("Cathemeral"),
 
-    // Habitat & Lifestyle
     TE("Terrestrial"),
     AQ("Aquatic"),
     AR("Arboreal"),
@@ -48,4 +44,8 @@ public enum Classification implements EnumId {
     SU("Subterranean");
 
     private final String description;
+
+    Classification(String description) {
+        this.description = description;
+    }
 }
