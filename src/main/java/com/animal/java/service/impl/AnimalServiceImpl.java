@@ -184,15 +184,19 @@ public class AnimalServiceImpl implements AnimalService {
         List<Image> images = new ArrayList<>();
         if (animal.getAnimalImages() != null) {
             for (Image existing : animal.getAnimalImages()) {
-                if (existing == null) {
-                    continue;
+                Image fromUrl = materializeCdnImage(existing, animal.getId());
+                if (fromUrl != null) {
+                    images.add(fromUrl);
                 }
-                if (existing.getId() != null) {
-                    continue;
-                }
-                if (existing.hasCdnUrl()) {
-                    Image fromUrl = cloudinaryStorageService.fromUrl(existing.getUrl(), existing.getName());
-                    fromUrl.setAnimalId(animal.getId());
+            }
+        }
+
+        if (animal.getAnimalInfo() != null
+                && animal.getAnimalInfo().getAppearance() != null
+                && animal.getAnimalInfo().getAppearance().getImages() != null) {
+            for (Image appearanceImage : animal.getAnimalInfo().getAppearance().getImages()) {
+                Image fromUrl = materializeCdnImage(appearanceImage, animal.getId());
+                if (fromUrl != null) {
                     images.add(fromUrl);
                 }
             }
@@ -227,8 +231,27 @@ public class AnimalServiceImpl implements AnimalService {
             if (animal.getAnimalInfo() != null && animal.getAnimalInfo().getDistribution() != null) {
                 animal.getAnimalInfo().getDistribution().setDistributionMap(mapImage);
             }
+        } else if (animal.getAnimalInfo() != null
+                && animal.getAnimalInfo().getDistribution() != null
+                && animal.getAnimalInfo().getDistribution().getDistributionMap() != null) {
+            Image mapFromUrl = materializeCdnImage(
+                    animal.getAnimalInfo().getDistribution().getDistributionMap(),
+                    animal.getId());
+            if (mapFromUrl != null) {
+                images.add(mapFromUrl);
+                animal.getAnimalInfo().getDistribution().setDistributionMap(mapFromUrl);
+            }
         }
         return images;
+    }
+
+    private Image materializeCdnImage(Image source, UUID animalId) {
+        if (source == null || source.getId() != null || !source.hasCdnUrl()) {
+            return null;
+        }
+        Image fromUrl = cloudinaryStorageService.fromUrl(source.getUrl(), source.getName());
+        fromUrl.setAnimalId(animalId);
+        return fromUrl;
     }
 
     @Override

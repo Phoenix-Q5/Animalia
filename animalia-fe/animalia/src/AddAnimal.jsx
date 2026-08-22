@@ -969,9 +969,11 @@ function AnimalForm() {
           <h3>Import from any template</h3>
         </div>
         <p className="bulk-copy">
-          Upload CSV, TSV, Excel, or JSON. Column names can vary — <em>common name</em>,
-          <em> latin name</em>, <em>scientific_name</em>, and similar aliases are mapped automatically.
-          Required fields: name, scientific name, phylum, family, and species.
+          Upload CSV, TSV, Excel, or JSON. The template covers taxonomy, stats, diet/habitat,
+          biomes, climate zones, IUCN population fields, distribution geography, gallery image URLs,
+          subspecies, and references. Multi-value cells use <em>|</em> (e.g. <em>FOREST|SWAMP</em>).
+          JSON may be flat rows or full nested Animal objects. Required: name, scientific name,
+          phylum, family, and species.
         </p>
         <div className="bulk-actions">
           <button type="button" className="btn ghost" onClick={downloadTemplate}>
