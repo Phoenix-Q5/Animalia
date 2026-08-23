@@ -1,6 +1,7 @@
 package com.animal.java.model.animal;
 
 import com.animal.java.validation.extension.AnimalValidationObject;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -53,6 +54,7 @@ public class Animal implements AnimalValidationObject {
     private List<Animal> relatedAnimals = new ArrayList<>();
 
     @Override
+    @JsonIgnore
     public String getObjectId() {
         if (id != null) {
             return id.toString();
@@ -61,6 +63,7 @@ public class Animal implements AnimalValidationObject {
     }
 
     @Override
+    @JsonIgnore
     public List<Image> getImages() {
         return animalImages;
     }

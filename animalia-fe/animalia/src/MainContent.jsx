@@ -39,27 +39,32 @@ function MainContent() {
     }, []);
 
     useEffect(() => {
-        // Fetch all animals from the backend when component mounts
-        fetch('/api/v1/animals/getAllAnimals')
+        fetch('/api/v1/animals?page=0&size=48&sort=name,asc')
             .then(response => response.json())
             .then(data => {
-                setAllAnimals(data);
-                setAnimals(data);
-                console.log('All Animals Data:', data)
+                const content = Array.isArray(data?.content) ? data.content : (Array.isArray(data) ? data : []);
+                setAllAnimals(content);
+                setAnimals(content);
             })
             .catch(error => console.error('Error fetching animals:', error));
     }, []);
 
     const handleSearch = () => {
-        if (searchTerm.trim() === '') {
-            setAnimals(allAnimals);
-        } else {
-            const filteredAnimals = allAnimals.filter(animal =>
-                animal.name.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            setAnimals(filteredAnimals);
-            console.log(`Search Results for "${searchTerm}":`, filteredAnimals);
+        const params = new URLSearchParams({
+            page: '0',
+            size: '48',
+            sort: 'name,asc'
+        });
+        if (searchTerm.trim()) {
+            params.set('q', searchTerm.trim());
         }
+        fetch(`/api/v1/animals?${params}`)
+            .then(response => response.json())
+            .then(data => {
+                const content = Array.isArray(data?.content) ? data.content : [];
+                setAnimals(content);
+            })
+            .catch(error => console.error('Error searching animals:', error));
     };
 
     const handleAnimalClick = (animalId) => {

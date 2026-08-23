@@ -2,6 +2,9 @@ package com.animal.java.dao;
 
 import com.animal.java.annotations.JooqConfiguration;
 import com.animal.java.annotations.TransactionRequired;
+import com.animal.java.dto.AnimalFacets;
+import com.animal.java.dto.AnimalSearchRequest;
+import com.animal.java.dto.PageResponse;
 import com.animal.java.mapper.AnimalMapper;
 import com.animal.java.model.animal.Animal;
 import com.animal.java.model.animal.AnimalExtendedInfo;
@@ -26,6 +29,8 @@ import com.animal.jooq.generated.tables.JGalleryimage;
 import com.animal.jooq.generated.tables.daos.JAnimalDao;
 import com.animal.jooq.generated.tables.daos.JAnimalextendedinfoDao;
 import com.animal.jooq.generated.tables.daos.JAnimalinfoDao;
+import org.apache.commons.lang3.StringUtils;
+import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
@@ -34,6 +39,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -244,6 +250,196 @@ public class AnimalRepository {
 
     public boolean existsByScientificName(String scientificName) {
         return dsl.fetchExists(dsl.selectFrom(ANIMAL_).where(ANIMAL_.SCIENTIFICNAME.equalIgnoreCase(scientificName)));
+    }
+
+    public List<UUID> findAllIds() {
+        return dsl.select(ANIMAL_.ID).from(ANIMAL_).fetch(ANIMAL_.ID);
+    }
+
+    public PageResponse<Animal> searchPage(AnimalSearchRequest request) {
+        Condition condition = buildSearchCondition(request);
+        String[] sortParts = parseSort(request.getSort());
+        org.jooq.SortField<?> sortField = mapDbSort(sortParts[0], sortParts[1]);
+
+        Long total = dsl.selectCount()
+                .from(ANIMAL_)
+                .leftJoin(POPULATION).on(POP_ANIMAL_ID.eq(ANIMAL_.ID))
+                .leftJoin(ANIMAL_INFO).on(ANIMAL_INFO.ANIMALID.eq(ANIMAL_.ID))
+                .where(condition)
+                .fetchOne(0, Long.class);
+
+        List<UUID> ids = dsl.select(ANIMAL_.ID)
+                .from(ANIMAL_)
+                .leftJoin(POPULATION).on(POP_ANIMAL_ID.eq(ANIMAL_.ID))
+                .leftJoin(ANIMAL_INFO).on(ANIMAL_INFO.ANIMALID.eq(ANIMAL_.ID))
+                .where(condition)
+                .orderBy(sortField)
+                .limit(request.getSize())
+                .offset(request.getPage() * request.getSize())
+                .fetch(ANIMAL_.ID);
+
+        List<Animal> content = new ArrayList<>();
+        for (UUID id : ids) {
+            Animal animal = getById(id);
+            if (animal != null) {
+                // Keep list payload light: drop heavy nested collections not needed for cards.
+                animal.setSubspecies(List.of());
+                animal.setReferences(List.of());
+                animal.setRelatedAnimals(List.of());
+                content.add(animal);
+            }
+        }
+        return PageResponse.of(content, request.getPage(), request.getSize(), total == null ? 0L : total, request.getSort());
+    }
+
+    public AnimalFacets loadFacets() {
+        List<AnimalFacets.FacetBucket> letters = dsl
+                .select(DSL.upper(DSL.substring(ANIMAL_.NAME, 1, 1)), DSL.count())
+                .from(ANIMAL_)
+                .where(ANIMAL_.NAME.isNotNull())
+                .groupBy(DSL.upper(DSL.substring(ANIMAL_.NAME, 1, 1)))
+                .orderBy(DSL.upper(DSL.substring(ANIMAL_.NAME, 1, 1)))
+                .fetch(r -> AnimalFacets.FacetBucket.builder()
+                        .key(r.value1())
+                        .label(r.value1())
+                        .count(r.value2())
+                        .build());
+
+        List<AnimalFacets.FacetBucket> species = dsl
+                .select(ANIMAL_.SPECIES, DSL.count())
+                .from(ANIMAL_)
+                .where(ANIMAL_.SPECIES.isNotNull().and(ANIMAL_.SPECIES.ne("")))
+                .groupBy(ANIMAL_.SPECIES)
+                .orderBy(DSL.count().desc())
+                .limit(50)
+                .fetch(r -> AnimalFacets.FacetBucket.builder()
+                        .key(r.value1())
+                        .label(r.value1())
+                        .count(r.value2())
+                        .build());
+
+        List<AnimalFacets.FacetBucket> habitats = dsl
+                .select(INFO_HABITAT, DSL.count())
+                .from(ANIMAL_INFO)
+                .where(INFO_HABITAT.isNotNull().and(INFO_HABITAT.ne("")))
+                .groupBy(INFO_HABITAT)
+                .orderBy(DSL.count().desc())
+                .limit(40)
+                .fetch(r -> AnimalFacets.FacetBucket.builder()
+                        .key(r.value1())
+                        .label(r.value1())
+                        .count(r.value2())
+                        .build());
+
+        List<AnimalFacets.FacetBucket> biomes = dsl
+                .select(BIOME_VALUE, DSL.count())
+                .from(ANIMAL_BIOME)
+                .groupBy(BIOME_VALUE)
+                .orderBy(DSL.count().desc())
+                .fetch(r -> AnimalFacets.FacetBucket.builder()
+                        .key(r.value1())
+                        .label(r.value1())
+                        .count(r.value2())
+                        .build());
+
+        List<AnimalFacets.FacetBucket> climates = dsl
+                .select(CLIMATE_VALUE, DSL.count())
+                .from(ANIMAL_CLIMATE_ZONE)
+                .groupBy(CLIMATE_VALUE)
+                .orderBy(DSL.count().desc())
+                .fetch(r -> AnimalFacets.FacetBucket.builder()
+                        .key(r.value1())
+                        .label(r.value1())
+                        .count(r.value2())
+                        .build());
+
+        List<AnimalFacets.FacetBucket> statuses = dsl
+                .select(POP_CONSERVATION, DSL.count())
+                .from(POPULATION)
+                .where(POP_CONSERVATION.isNotNull().and(POP_CONSERVATION.ne("")))
+                .groupBy(POP_CONSERVATION)
+                .orderBy(DSL.count().desc())
+                .fetch(r -> AnimalFacets.FacetBucket.builder()
+                        .key(r.value1())
+                        .label(r.value1())
+                        .count(r.value2())
+                        .build());
+
+        long total = dsl.fetchCount(ANIMAL_);
+        return AnimalFacets.builder()
+                .totalAnimals(total)
+                .letters(letters)
+                .species(species)
+                .habitats(habitats)
+                .biomes(biomes)
+                .climates(climates)
+                .statuses(statuses)
+                .build();
+    }
+
+    private Condition buildSearchCondition(AnimalSearchRequest request) {
+        Condition condition = DSL.trueCondition();
+        if (request == null) {
+            return condition;
+        }
+        if (StringUtils.isNotBlank(request.getQ())) {
+            String q = "%" + request.getQ().trim().toLowerCase(Locale.ROOT) + "%";
+            condition = condition.and(
+                    DSL.lower(ANIMAL_.NAME).like(q)
+                            .or(DSL.lower(ANIMAL_.SCIENTIFICNAME).like(q))
+                            .or(DSL.lower(ANIMAL_.SPECIES).like(q))
+                            .or(DSL.lower(ANIMAL_.FAMILY).like(q))
+                            .or(DSL.lower(ANIMAL_.GENUS).like(q))
+                            .or(DSL.lower(ANIMAL_.DESCRIPTION).like(q))
+            );
+        }
+        if (StringUtils.isNotBlank(request.getLetter())) {
+            condition = condition.and(DSL.upper(DSL.substring(ANIMAL_.NAME, 1, 1))
+                    .eq(request.getLetter().toUpperCase(Locale.ROOT)));
+        }
+        if (StringUtils.isNotBlank(request.getSpecies())) {
+            condition = condition.and(ANIMAL_.SPECIES.equalIgnoreCase(request.getSpecies()));
+        }
+        if (StringUtils.isNotBlank(request.getHabitat())) {
+            condition = condition.and(INFO_HABITAT.equalIgnoreCase(request.getHabitat()));
+        }
+        if (StringUtils.isNotBlank(request.getStatus())) {
+            condition = condition.and(POP_CONSERVATION.equalIgnoreCase(request.getStatus()));
+        }
+        if (StringUtils.isNotBlank(request.getBiome())) {
+            condition = condition.and(ANIMAL_.ID.in(
+                    dsl.select(BIOME_ANIMAL_ID).from(ANIMAL_BIOME)
+                            .where(BIOME_VALUE.equalIgnoreCase(request.getBiome()))
+            ));
+        }
+        if (StringUtils.isNotBlank(request.getClimate())) {
+            condition = condition.and(ANIMAL_.ID.in(
+                    dsl.select(CLIMATE_ANIMAL_ID).from(ANIMAL_CLIMATE_ZONE)
+                            .where(CLIMATE_VALUE.equalIgnoreCase(request.getClimate()))
+            ));
+        }
+        return condition;
+    }
+
+    private String[] parseSort(String sort) {
+        if (StringUtils.isBlank(sort)) {
+            return new String[]{"name", "asc"};
+        }
+        String[] parts = sort.split(",");
+        String field = parts[0].trim();
+        String direction = parts.length > 1 ? parts[1].trim() : "asc";
+        return new String[]{field, direction};
+    }
+
+    private org.jooq.SortField<?> mapDbSort(String field, String direction) {
+        boolean desc = "desc".equalsIgnoreCase(direction);
+        return switch (field.toLowerCase(Locale.ROOT)) {
+            case "scientificname", "scientific" -> desc ? ANIMAL_.SCIENTIFICNAME.desc() : ANIMAL_.SCIENTIFICNAME.asc();
+            case "species" -> desc ? ANIMAL_.SPECIES.desc() : ANIMAL_.SPECIES.asc();
+            case "family" -> desc ? ANIMAL_.FAMILY.desc() : ANIMAL_.FAMILY.asc();
+            case "status", "conservationstatus" -> desc ? POP_CONSERVATION.desc() : POP_CONSERVATION.asc();
+            default -> desc ? ANIMAL_.NAME.desc() : ANIMAL_.NAME.asc();
+        };
     }
 
     private void updateTaxonomyExtras(Animal animal) {

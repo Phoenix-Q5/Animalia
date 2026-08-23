@@ -3,10 +3,13 @@ package com.animal.java.service.impl;
 import com.animal.java.annotations.TransactionRequired;
 import com.animal.java.dao.AnimalRepository;
 import com.animal.java.dao.ImageRepository;
+import com.animal.java.dto.AnimalSearchRequest;
 import com.animal.java.model.animal.Animal;
 import com.animal.java.model.animal.Image;
 import com.animal.java.model.info.Appearance;
 import com.animal.java.model.info.Habits;
+import com.animal.java.service.AnimalCacheService;
+import com.animal.java.service.AnimalIndexService;
 import com.animal.java.service.AnimalService;
 import com.animal.java.service.CloudinaryStorageService;
 import lombok.RequiredArgsConstructor;
@@ -29,20 +32,25 @@ public class AnimalServiceImpl implements AnimalService {
     private final AnimalRepository animalRepository;
     private final ImageRepository imageRepository;
     private final CloudinaryStorageService cloudinaryStorageService;
+    private final AnimalIndexService animalIndexService;
+    private final AnimalCacheService animalCacheService;
 
     public List<Animal> getAllAnimals() {
-        List<Animal> animals = animalRepository.findAll();
-        for (Animal animal : animals) {
-            if (animal.getId() != null) {
-                animal.setAnimalImages(imageRepository.getByAnimalId(animal.getId()));
-            }
-        }
-        return animals;
+        return animalSearchPage();
+    }
+
+    private List<Animal> animalSearchPage() {
+        return animalRepository.searchPage(AnimalSearchRequest.builder()
+                        .page(0)
+                        .size(100)
+                        .sort("name,asc")
+                        .build())
+                .getContent();
     }
 
     @Override
     public List<Animal> getBrowseAnimals() {
-        return animalRepository.findAllForBrowse();
+        return animalSearchPage();
     }
 
     @Override
@@ -77,7 +85,10 @@ public class AnimalServiceImpl implements AnimalService {
             imageRepository.addImages(images);
             saved.setAnimalImages(images);
         }
-        return saved;
+        Animal complete = animalRepository.getById(saved.getId());
+        animalIndexService.index(complete != null ? complete : saved);
+        animalCacheService.evictAllListCaches();
+        return complete != null ? complete : saved;
     }
 
     @Override
@@ -122,7 +133,12 @@ public class AnimalServiceImpl implements AnimalService {
         if (saved != null && !images.isEmpty()) {
             imageRepository.addImages(images);
         }
-        return animalRepository.getById(id);
+        Animal complete = animalRepository.getById(id);
+        if (complete != null) {
+            animalIndexService.index(complete);
+            animalCacheService.evictAnimal(id.toString());
+        }
+        return complete;
     }
 
     private void preserveNestedIds(Animal existing, Animal incoming) {

@@ -21,7 +21,8 @@ public enum Family implements EnumId {
     PHOCIDAE ("True Seals"),
     ODOBENIDAE ("Walrus"),
     LEPORIDAE ("Rabbits and Hares"),
-    OCHOTONIDAE ("Pikas");
+    OCHOTONIDAE ("Pikas"),
+    OTHER("Other / Not Yet Classified");
 
     private final String example;
 

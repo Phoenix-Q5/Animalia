@@ -1,9 +1,14 @@
 package com.animal.java.controller;
 
+import com.animal.java.dto.AnimalFacets;
+import com.animal.java.dto.AnimalSearchRequest;
+import com.animal.java.dto.PageResponse;
 import com.animal.java.model.animal.Animal;
 import com.animal.java.model.animal.Image;
 import com.animal.java.model.enumConstants.*;
 import com.animal.java.service.AnimalBulkImportService;
+import com.animal.java.service.AnimalIndexService;
+import com.animal.java.service.AnimalSearchService;
 import com.animal.java.service.AnimalService;
 import com.animal.java.service.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -23,20 +28,80 @@ import java.util.stream.Collectors;
 public class AnimalController {
 
     private final AnimalService animalService;
-
     private final ImageService imageService;
-
     private final AnimalBulkImportService animalBulkImportService;
+    private final AnimalSearchService animalSearchService;
+    private final AnimalIndexService animalIndexService;
 
-
-    @GetMapping("/getAllAnimals")
-    public List<Animal> getAllAnimals(){
-        return animalService.getAllAnimals();
+    @GetMapping
+    public PageResponse<Animal> searchAnimals(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String letter,
+            @RequestParam(required = false) String species,
+            @RequestParam(required = false) String habitat,
+            @RequestParam(required = false) String biome,
+            @RequestParam(required = false) String climate,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "24") int size,
+            @RequestParam(defaultValue = "name,asc") String sort
+    ) {
+        return animalSearchService.search(AnimalSearchRequest.builder()
+                .q(q)
+                .letter(letter)
+                .species(species)
+                .habitat(habitat)
+                .biome(biome)
+                .climate(climate)
+                .status(status)
+                .page(page)
+                .size(size)
+                .sort(sort)
+                .build());
     }
 
+    @GetMapping("/facets")
+    public AnimalFacets getFacets() {
+        return animalSearchService.facets();
+    }
+
+    /** @deprecated Use {@code GET /api/v1/animals?page=&size=} */
+    @Deprecated
+    @GetMapping("/getAllAnimals")
+    public PageResponse<Animal> getAllAnimals(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "24") int size,
+            @RequestParam(defaultValue = "name,asc") String sort
+    ) {
+        return animalSearchService.search(AnimalSearchRequest.builder()
+                .page(page)
+                .size(size)
+                .sort(sort)
+                .build());
+    }
+
+    /** @deprecated Use {@code GET /api/v1/animals} with filters */
+    @Deprecated
     @GetMapping("/getBrowseAnimals")
-    public List<Animal> getBrowseAnimals() {
-        return animalService.getBrowseAnimals();
+    public PageResponse<Animal> getBrowseAnimals(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String letter,
+            @RequestParam(required = false) String species,
+            @RequestParam(required = false) String habitat,
+            @RequestParam(required = false) String biome,
+            @RequestParam(required = false) String climate,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "24") int size,
+            @RequestParam(defaultValue = "name,asc") String sort
+    ) {
+        return searchAnimals(q, letter, species, habitat, biome, climate, status, page, size, sort);
+    }
+
+    @PostMapping("/admin/reindex")
+    public ResponseEntity<?> reindex() {
+        long indexed = animalIndexService.reindexAll();
+        return ResponseEntity.ok(Map.of("indexed", indexed));
     }
 //
     @PostMapping("/addAnimal")

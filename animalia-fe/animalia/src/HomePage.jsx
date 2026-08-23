@@ -9,14 +9,10 @@ import {
   ALPHABET,
   IUCN_META,
   IUCN_ORDER,
-  applyBrowseFilter,
-  filterAnimals,
   firstLetter,
-  lettersWithMatches,
-  sceneImageFor,
-  uniqueHabitats,
-  uniqueSpecies
+  sceneImageFor
 } from './animalBrowseUtils';
+import { browseFilterToSearchOptions, fetchAnimalFacets, fetchAnimalPage } from './animalApi';
 
 const HERO_IMAGES = [
   'bluefrog.jpg',
@@ -215,11 +211,18 @@ function HomePage() {
   const { keycloak, initialized } = useKeycloak();
   const [heroIndex, setHeroIndex] = useState(0);
   const [animals, setAnimals] = useState([]);
+  const [featuredAnimals, setFeaturedAnimals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [browseFilter, setBrowseFilter] = useState(null);
   const [biomeOptions, setBiomeOptions] = useState([]);
   const [climateOptions, setClimateOptions] = useState([]);
+  const [facets, setFacets] = useState(null);
+  const [page, setPage] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const pageSize = 24;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -229,34 +232,75 @@ function HomePage() {
   }, []);
 
   useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchTerm), 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  useEffect(() => {
     Promise.all([
-      fetch('/api/v1/animals/getBrowseAnimals').then((r) => r.json()),
+      fetchAnimalFacets(),
       fetch('/api/v1/animals/getAnimalBiomes').then((r) => r.json()),
-      fetch('/api/v1/animals/getAnimalClimateZones').then((r) => r.json())
+      fetch('/api/v1/animals/getAnimalClimateZones').then((r) => r.json()),
+      fetchAnimalPage({ page: 0, size: 6, sort: 'name,asc' })
     ])
-      .then(([animalData, biomes, climates]) => {
-        setAnimals(Array.isArray(animalData) ? animalData : []);
+      .then(([facetData, biomes, climates, featuredPage]) => {
+        setFacets(facetData || null);
         setBiomeOptions(Object.entries(biomes || {}).map(([id, label]) => ({ id, label })));
         setClimateOptions(Object.entries(climates || {}).map(([id, label]) => ({ id, label })));
+        setFeaturedAnimals(Array.isArray(featuredPage?.content) ? featuredPage.content : []);
       })
-      .catch((error) => console.error('Error loading browse catalog:', error))
-      .finally(() => setLoading(false));
+      .catch((error) => console.error('Error loading browse catalog:', error));
   }, []);
 
-  const filteredAnimals = useMemo(
-    () => filterAnimals(animals, searchTerm, browseFilter),
-    [animals, searchTerm, browseFilter]
+  useEffect(() => {
+    setPage(0);
+  }, [debouncedSearch, browseFilter]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    const filterOptions = browseFilterToSearchOptions(browseFilter);
+    fetchAnimalPage({
+      q: debouncedSearch,
+      ...filterOptions,
+      page,
+      size: pageSize,
+      sort: 'name,asc'
+    })
+      .then((result) => {
+        if (cancelled) return;
+        setAnimals(Array.isArray(result?.content) ? result.content : []);
+        setTotalElements(result?.totalElements ?? 0);
+        setTotalPages(result?.totalPages ?? 0);
+      })
+      .catch((error) => {
+        if (!cancelled) console.error('Error loading animals page:', error);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [debouncedSearch, browseFilter, page]);
+
+  const nameLetters = useMemo(() => {
+    const keys = new Set((facets?.letters || []).map((b) => String(b.key || '').toUpperCase()));
+    return keys;
+  }, [facets]);
+
+  const speciesList = useMemo(
+    () => (facets?.species || []).map((b) => b.key).filter(Boolean),
+    [facets]
+  );
+  const habitatList = useMemo(
+    () => (facets?.habitats || []).map((b) => b.key).filter(Boolean),
+    [facets]
   );
 
-  const featuredAnimals = useMemo(() => animals.slice(0, 6), [animals]);
-
-  const nameLetters = useMemo(
-    () => lettersWithMatches(animals, (a) => firstLetter(a?.name)),
-    [animals]
-  );
-
-  const speciesList = useMemo(() => uniqueSpecies(animals), [animals]);
-  const habitatList = useMemo(() => uniqueHabitats(animals), [animals]);
+  const facetCount = (type, value) => {
+    const list = facets?.[type] || [];
+    const match = list.find((b) => String(b.key).toLowerCase() === String(value).toLowerCase());
+    return match?.count ?? 0;
+  };
 
   const setFilter = (type, value) => {
     setBrowseFilter((prev) => (
@@ -274,7 +318,8 @@ function HomePage() {
     ? 'Search results'
     : browseFilter
       ? 'Browse results'
-      : 'Results';
+      : 'Catalog';
+  const filteredAnimals = animals;
 
   return (
     <div className="home-page">
@@ -355,9 +400,30 @@ function HomePage() {
         {!loading && hasActiveBrowse && (
           <BrowseSection
             title={resultsTitle}
-            subtitle={`${filteredAnimals.length} animal${filteredAnimals.length === 1 ? '' : 's'} found`}
+            subtitle={`${totalElements} animal${totalElements === 1 ? '' : 's'} found`}
           >
             <AnimalGrid animals={filteredAnimals} compact />
+            {totalPages > 1 && (
+              <div className="home-pagination">
+                <button
+                  type="button"
+                  className="btn ghost"
+                  disabled={page <= 0}
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                >
+                  Previous
+                </button>
+                <span>Page {page + 1} of {totalPages}</span>
+                <button
+                  type="button"
+                  className="btn ghost"
+                  disabled={page >= totalPages - 1}
+                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </BrowseSection>
         )}
 
@@ -381,7 +447,7 @@ function HomePage() {
               ) : (
                 <div className="home-species-grid">
                   {speciesList.map((species) => {
-                    const count = applyBrowseFilter(animals, { type: 'species', value: species }).length;
+                    const count = facetCount('species', species);
                     return (
                       <motion.button
                         type="button"
@@ -402,7 +468,7 @@ function HomePage() {
             <BrowseSection title="Browse by biome" subtitle="Habitat types where species live">
               <div className="home-scene-grid">
                 {biomeOptions.map((option) => {
-                  const count = applyBrowseFilter(animals, { type: 'biome', value: option.id }).length;
+                  const count = facetCount('biomes', option.id);
                   return (
                     <motion.button
                       type="button"
@@ -425,7 +491,7 @@ function HomePage() {
             <BrowseSection title="Browse by climate zone" subtitle="Temperature bands across the wild map">
               <div className="home-scene-grid">
                 {climateOptions.map((option) => {
-                  const count = applyBrowseFilter(animals, { type: 'climate', value: option.id }).length;
+                  const count = facetCount('climates', option.id);
                   return (
                     <motion.button
                       type="button"
@@ -449,7 +515,7 @@ function HomePage() {
               <div className="home-iucn-row">
                 {IUCN_ORDER.map((code) => {
                   const meta = IUCN_META[code];
-                  const count = applyBrowseFilter(animals, { type: 'status', value: code }).length;
+                  const count = facetCount('statuses', code);
                   return (
                     <motion.button
                       type="button"
