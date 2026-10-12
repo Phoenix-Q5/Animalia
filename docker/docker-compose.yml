@@ -67,7 +67,7 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
       KC_HOSTNAME: http://localhost:8081
-      KC_HTTP_ENABLED: true
+      KC_HTTP_ENABLED: "true"
     volumes:
       - ./keycloak/animalia-realm.json:/opt/keycloak/data/import/animalia-realm.json:ro
 
