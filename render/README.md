@@ -39,7 +39,7 @@ Once the frontend path and Dockerfile are confirmed, add this service to the `se
 The frontend Dockerfile must listen on `0.0.0.0:$PORT` (or set `PORT` to the actual listener's fixed port, e.g. `80` for Nginx). For Vite/React, build-time API URL must be provided during image build or injected via runtime config.
 
 ## How to deploy
-1. Copy `render.yaml` to repository root and the included Keycloak Dockerfile to `docker/keycloak/Dockerfile`. The realm JSON already exists in the GitHub repository.
+1. Copy `../render.yaml` to repository root and the included Keycloak Dockerfile to `docker/keycloak/Dockerfile`. The realm JSON already exists in the GitHub repository.
 2. Fix both JDBC URL mappings and provide Keycloak DB credentials.
 3. Commit changes and authorize the GitHub repo in Render.
 4. In Render: New > Blueprint > select repo + branch > review resources, costs, and prompted variables > apply.
