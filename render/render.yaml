@@ -1,0 +1,130 @@
+# Animalia Render Blueprint — backend paths verified against public Phoenix-Q5/Animalia main branch.
+# Paid infrastructure: private Elasticsearch, Keycloak, backend, PostgreSQL and Key Value.
+services:
+  - type: keyvalue
+    name: animalia-redis
+    region: ohio
+    plan: 256mb
+    ipAllowList: []
+    maxmemoryPolicy: allkeys-lru
+
+  - type: pserv
+    name: animalia-elasticsearch
+    runtime: image
+    region: ohio
+    plan: 1c-2g
+    image:
+      url: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
+    envVars:
+      - key: discovery.type
+        value: single-node
+      - key: xpack.security.enabled
+        value: 'false'
+      - key: xpack.security.http.ssl.enabled
+        value: 'false'
+      - key: ES_JAVA_OPTS
+        value: -Xms512m -Xmx512m
+      - key: PORT
+        value: '9200'
+    disk:
+      name: elasticsearch-data
+      mountPath: /usr/share/elasticsearch/data
+      sizeGB: 10
+
+  - type: web
+    name: animalia-keycloak
+    runtime: docker
+    region: ohio
+    plan: 1c-2g
+    dockerfilePath: ./docker/keycloak/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: PORT
+        value: '8080'
+      - key: KC_HTTP_ENABLED
+        value: 'true'
+      - key: KC_PROXY_HEADERS
+        value: xforwarded
+      - key: KC_HOSTNAME
+        sync: false
+      - key: KC_DB
+        value: postgres
+      # Keycloak requires a JDBC URL, see README before deployment.
+      - key: KC_DB_URL
+        sync: false
+      - key: KC_DB_USERNAME
+        fromDatabase:
+          name: animalia-keycloak-db
+          property: user
+      - key: KC_DB_PASSWORD
+        fromDatabase:
+          name: animalia-keycloak-db
+          property: password
+      - key: KC_BOOTSTRAP_ADMIN_USERNAME
+        value: admin
+      - key: KC_BOOTSTRAP_ADMIN_PASSWORD
+        generateValue: true
+
+  - type: web
+    name: animalia-api
+    runtime: docker
+    region: ohio
+    plan: 1c-2g
+    dockerfilePath: ./docker/backend.Dockerfile
+    dockerContext: .
+    envVars:
+      - key: PORT
+        value: '8080'
+      - key: SERVER_PORT
+        value: '8080'
+      # Must be set to a JDBC URL, see README before deployment.
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: animalia-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: animalia-db
+          property: password
+      - key: REDIS_HOST
+        fromService:
+          type: keyvalue
+          name: animalia-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: keyvalue
+          name: animalia-redis
+          property: port
+      - key: REDIS_PASSWORD
+        sync: false
+      - key: ELASTICSEARCH_URIS
+        sync: false
+      - key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+        sync: false
+      - key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+        sync: false
+      - key: CLOUDINARY_URL
+        sync: false
+
+  # Frontend requires repository path confirmation; the Compose build context
+  # points outside the Animalia repository. Do not invent a path.
+  # See README.md for setup once the repo paths are verified.
+
+databases:
+  - name: animalia-db
+    region: ohio
+    databaseName: animal
+    user: animalia_app
+    postgresMajorVersion: '14'
+    plan: 0.1c-256mb
+    ipAllowList: []
+  - name: animalia-keycloak-db
+    region: ohio
+    databaseName: keycloak
+    user: keycloak_app
+    postgresMajorVersion: '14'
+    plan: 0.1c-256mb
+    ipAllowList: []
