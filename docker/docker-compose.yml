@@ -11,6 +11,11 @@ services:
       - POSTGRES_PASSWORD=secret
       - POSTGRES_USER=super
       - POSTGRES_DB=animal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U super -d animal"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
   jenkins:
     image: jenkins/jenkins:lts
@@ -65,6 +70,42 @@ services:
       KC_HTTP_ENABLED: true
     volumes:
       - ./keycloak/animalia-realm.json:/opt/keycloak/data/import/animalia-realm.json:ro
+
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/backend.Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/animal
+      SPRING_DATASOURCE_USERNAME: super
+      SPRING_DATASOURCE_PASSWORD: secret
+      REDIS_HOST: cache
+      SPRING_DATA_REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+      ELASTICSEARCH_URIS: http://elasticsearch:9200
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://localhost:8081/realms/animalia
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/animalia/protocol/openid-connect/certs
+      CLOUDINARY_URL: ${CLOUDINARY_URL:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      cache:
+        condition: service_started
+      keycloak:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ../animalia-fe/animalia
+    restart: unless-stopped
+    ports:
+      - 3000:80
+    depends_on:
+      - backend
 
 volumes:
     cache:
