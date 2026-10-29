@@ -36,10 +36,12 @@
       "rootUrl": "http://localhost:3000",
       "baseUrl": "http://localhost:3000",
       "redirectUris": [
-        "http://localhost:3000/*"
+        "http://localhost:3000/*",
+        "https://animalia.bhavyanth.com/*"
       ],
       "webOrigins": [
-        "http://localhost:3000"
+        "http://localhost:3000",
+        "https://animalia.bhavyanth.com"
       ],
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,

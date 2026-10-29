@@ -3,6 +3,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+ARG REACT_APP_API_URL
+ARG REACT_APP_KEYCLOAK_URL
 RUN npm run build
 
 FROM nginx:1.27-alpine

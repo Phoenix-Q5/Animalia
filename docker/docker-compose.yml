@@ -1,114 +1,45 @@
-version: '3.9'
-
 services:
-  postgres:
-    image: postgres:14-alpine
-    ports:
-      - 5430:5432
-    volumes:
-      - ~/apps/postgres:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_USER=super
-      - POSTGRES_DB=animal
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U super -d animal"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
-  jenkins:
-    image: jenkins/jenkins:lts
-    restart: always
-    privileged: true
-    user: root
-    ports:
-      - 8083:8080
-      - 50000:50000
-    container_name: jenkins
-    volumes:
-      - /home/ubuntu/jenkins_compose/jenkins_configuration:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-
-  cache:
-    image: redis:6.2-alpine
-    restart: always
-    ports:
-      - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-    volumes:
-      - cache:/data
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
-    restart: always
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - xpack.security.http.ssl.enabled=false
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    ports:
-      - '9200:9200'
-      - '9300:9300'
-    volumes:
-      - elasticsearch:/usr/share/elasticsearch/data
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s http://localhost:9200 >/dev/null || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 20
-
-  keycloak:
-    image: quay.io/keycloak/keycloak:26.0.5
-    command: ["start-dev", "--import-realm"]
-    ports:
-      - 8081:8080
-    environment:
-      KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-      KC_HOSTNAME: http://localhost:8081
-      KC_HTTP_ENABLED: "true"
-    volumes:
-      - ./keycloak/animalia-realm.json:/opt/keycloak/data/import/animalia-realm.json:ro
-
   backend:
     build:
       context: ..
       dockerfile: docker/backend.Dockerfile
     restart: unless-stopped
-    ports:
-      - 8080:8080
+    networks: [infra, proxy]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.animalia-api.rule=Host(`${API_HOST}`)"
+      - "traefik.http.services.animalia-api.loadbalancer.server.port=8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/animal
-      SPRING_DATASOURCE_USERNAME: super
-      SPRING_DATASOURCE_PASSWORD: secret
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-animal}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-super}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      APP_CORS_ALLOWED_ORIGINS: https://${FRONTEND_HOST}
       REDIS_HOST: cache
-      SPRING_DATA_REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD}
       ELASTICSEARCH_URIS: http://elasticsearch:9200
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://localhost:8081/realms/animalia
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: https://${KEYCLOAK_HOST}/realms/animalia
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/animalia/protocol/openid-connect/certs
       CLOUDINARY_URL: ${CLOUDINARY_URL:-}
-    depends_on:
-      postgres:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
-      cache:
-        condition: service_started
-      keycloak:
-        condition: service_started
 
   frontend:
     build:
       context: ../animalia-fe/animalia
+      args:
+        REACT_APP_API_URL: https://${API_HOST}
+        REACT_APP_KEYCLOAK_URL: https://${KEYCLOAK_HOST}
     restart: unless-stopped
-    ports:
-      - 3000:80
+    networks: [infra, proxy]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.animalia.rule=Host(`${FRONTEND_HOST}`)"
+      - "traefik.http.services.animalia.loadbalancer.server.port=80"
     depends_on:
       - backend
 
-volumes:
-    cache:
-      driver: local
-    elasticsearch:
-      driver: local
+networks:
+  infra:
+    external: true
+  proxy:
+    external: true

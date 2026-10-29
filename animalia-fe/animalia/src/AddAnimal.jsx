@@ -145,7 +145,7 @@ function AnimalForm() {
   const [bulkBusy, setBulkBusy] = useState(false);
 
   const api = axios.create({
-    baseURL: 'http://localhost:8080'
+    baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8080'
   });
 
   useEffect(() => {
