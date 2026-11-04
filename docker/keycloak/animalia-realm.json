@@ -37,11 +37,11 @@
       "baseUrl": "http://localhost:3000",
       "redirectUris": [
         "http://localhost:3000/*",
-        "https://animalia.bhavyanth.com/*"
+        "https://animalia.corevanta.app/*"
       ],
       "webOrigins": [
         "http://localhost:3000",
-        "https://animalia.bhavyanth.com"
+        "https://animalia.corevanta.app"
       ],
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
