@@ -96,6 +96,7 @@ function enumId(value) {
 }
 
 const IUCN_ORDER = ['NE', 'DD', 'LC', 'NT', 'VU', 'EN', 'CR', 'EW', 'EX'];
+const BULK_JOB_KEY = 'animalia-bulk-import-job';
 
 const IUCN_META = {
   EX: { label: 'Extinct', tone: 'dark' },
@@ -122,7 +123,7 @@ function AnimalForm() {
     const { id } = useParams();
     const navigate = useNavigate();
     const isEdit = Boolean(id);
-    const [activeTab, setActiveTab] = useState('basic');
+    const [activeTab, setActiveTab] = useState(() => !id && sessionStorage.getItem(BULK_JOB_KEY) ? 'bulk' : 'basic');
     const [loadingAnimal, setLoadingAnimal] = useState(Boolean(id));
     const [loadError, setLoadError] = useState('');
     const [saving, setSaving] = useState(false);
@@ -142,11 +143,59 @@ function AnimalForm() {
 
   const [bulkFile, setBulkFile] = useState(null);
   const [bulkResult, setBulkResult] = useState(null);
-  const [bulkBusy, setBulkBusy] = useState(false);
+  const [bulkJobId, setBulkJobId] = useState(() => sessionStorage.getItem(BULK_JOB_KEY));
+  const [bulkStatus, setBulkStatus] = useState(() => sessionStorage.getItem(BULK_JOB_KEY) ? 'QUEUED' : '');
+  const [bulkMessage, setBulkMessage] = useState('');
+  const [bulkBusy, setBulkBusy] = useState(() => Boolean(sessionStorage.getItem(BULK_JOB_KEY)));
 
   const api = axios.create({
     baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8080'
   });
+
+  useEffect(() => {
+    if (!bulkJobId) return undefined;
+    let cancelled = false;
+    let timer;
+    const poll = async () => {
+      if (!keycloak.token) {
+        timer = setTimeout(poll, 3000);
+        return;
+      }
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/v1/animals/admin/bulkImport/${bulkJobId}`,
+          { headers: { Authorization: `Bearer ${keycloak.token}` } }
+        );
+        if (cancelled) return;
+        const job = response.data;
+        setBulkStatus(job.status);
+        setBulkMessage(job.error || '');
+        if (job.status === 'COMPLETED' || job.status === 'FAILED') {
+          setBulkResult(job.result);
+          setBulkBusy(false);
+        } else {
+          timer = setTimeout(poll, 3000);
+        }
+      } catch (error) {
+        if (cancelled) return;
+        if (error.response?.status === 404) {
+          sessionStorage.removeItem(BULK_JOB_KEY);
+          setBulkJobId(null);
+          setBulkStatus('FAILED');
+          setBulkBusy(false);
+          setBulkMessage('Import status is no longer available, possibly because the server restarted or the result expired. Some animals may have been imported; check the catalog before retrying.');
+        } else {
+          setBulkMessage('Unable to check import status. Retrying automatically.');
+          timer = setTimeout(poll, 5000);
+        }
+      }
+    };
+    poll();
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [bulkJobId, keycloak]);
 
   useEffect(() => {
     Promise.all([
@@ -536,7 +585,6 @@ function AnimalForm() {
   const handleBulkFileChange = e => {
     const file = e.target.files[0];
     setBulkFile(file || null);
-    setBulkResult(null);
   };
 
   const downloadTemplate = () => {
@@ -564,23 +612,27 @@ function AnimalForm() {
     const formData = new FormData();
     formData.append('file', bulkFile);
     setBulkBusy(true);
+    setBulkStatus('UPLOADING');
+    setBulkMessage('');
+    setBulkResult(null);
+    sessionStorage.removeItem(BULK_JOB_KEY);
+    setBulkJobId(null);
     api.post('/api/v1/animals/admin/bulkImport', formData, {
       headers: {
         Authorization: keycloak.token ? `Bearer ${keycloak.token}` : undefined
       }
     })
-      .then(response => setBulkResult(response.data))
+      .then(response => {
+        sessionStorage.setItem(BULK_JOB_KEY, response.data.id);
+        setBulkStatus(response.data.status);
+        setBulkJobId(response.data.id);
+      })
       .catch(error => {
         console.error('Error:', error);
-        setBulkResult({
-          totalRows: 0,
-          imported: 0,
-          failed: 0,
-          fileError: 'Bulk import failed. Check the file and try again.',
-          rows: []
-        });
-      })
-      .finally(() => setBulkBusy(false));
+        setBulkStatus('FAILED');
+        setBulkMessage(error.response?.data?.error || 'Could not confirm submission. The import may have started; check the catalog before retrying.');
+        setBulkBusy(false);
+      });
   };
 
   const tabs = isEdit
@@ -985,12 +1037,27 @@ function AnimalForm() {
             type="file"
             accept=".csv,.tsv,.txt,.xlsx,.xls,.json"
             onChange={handleBulkFileChange}
+            disabled={bulkBusy}
           />
           <i className="fas fa-file-import"></i>
           <strong>Drop a catalog file</strong>
           <em>{bulkFile ? bulkFile.name : 'CSV, Excel, or JSON'}</em>
         </label>
       </section>
+
+      {bulkStatus && (
+        <section className="panel-card" role="status" aria-live="polite">
+          <h3>Import status: {{
+            UPLOADING: 'Uploading',
+            QUEUED: 'Queued',
+            RUNNING: 'In progress',
+            COMPLETED: bulkResult?.fileError ? 'File rejected' : 'Completed',
+            FAILED: 'Failed'
+          }[bulkStatus]}</h3>
+          {bulkBusy && <p>You can return to this page in this tab to check the status. A server restart interrupts the import.</p>}
+          {bulkMessage && <p className="bulk-error">{bulkMessage}</p>}
+        </section>
+      )}
 
       {bulkResult && (
         <section className="panel-card">

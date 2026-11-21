@@ -34,7 +34,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -78,10 +77,9 @@ public class AnimalTemplateParser {
 
     private final ObjectMapper objectMapper;
 
-    public List<ParsedTemplateRow> parse(MultipartFile file) {
+    public List<ParsedTemplateRow> parse(String originalFilename, byte[] bytes) {
         try {
-            String filename = Optional.ofNullable(file.getOriginalFilename()).orElse("").toLowerCase(Locale.ROOT);
-            byte[] bytes = file.getBytes();
+            String filename = Optional.ofNullable(originalFilename).orElse("").toLowerCase(Locale.ROOT);
             if (filename.endsWith(".json") || looksLikeJson(bytes)) {
                 return parseJson(bytes);
             }

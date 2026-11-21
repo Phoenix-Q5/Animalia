@@ -2,6 +2,15 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Bulk animal imports
+
+The admin bulk-import page submits a background job and polls for its status and row results.
+The current job can be reopened in the same browser tab. Jobs run on the API instance that
+accepted them; use a single API instance (or sticky routing) for status requests. Results are
+kept in memory for up to 24 hours, subject to a limit of 100 finished jobs. Restarting the
+API interrupts jobs and clears their status. An interrupted import may have saved some rows,
+so check the catalog before submitting it again. The existing 10 MB upload limit still applies.
+
 ## Available Scripts
 
 In the project directory, you can run:

@@ -11,9 +11,9 @@ import com.animal.java.validation.ValidationNotification;
 import com.animal.java.validation.pipeline.ValidationPipeline;
 import com.animal.java.validation.pipeline.ValidationResult;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AnimalBulkImportServiceImpl implements AnimalBulkImportService {
 
     private final AnimalTemplateParser parser;
@@ -31,8 +32,8 @@ public class AnimalBulkImportServiceImpl implements AnimalBulkImportService {
     private final AnimalService animalService;
 
     @Override
-    public BulkImportResult importAnimals(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
+    public BulkImportResult importAnimals(String filename, byte[] contents) {
+        if (contents == null || contents.length == 0) {
             return BulkImportResult.builder()
                     .totalRows(0)
                     .imported(0)
@@ -44,7 +45,7 @@ public class AnimalBulkImportServiceImpl implements AnimalBulkImportService {
 
         List<ParsedTemplateRow> parsedRows;
         try {
-            parsedRows = parser.parse(file);
+            parsedRows = parser.parse(filename, contents);
         } catch (AnimaliaException ex) {
             return BulkImportResult.builder()
                     .totalRows(0)
@@ -97,6 +98,7 @@ public class AnimalBulkImportServiceImpl implements AnimalBulkImportService {
                     animalService.insertAnimal(animal);
                     imported++;
                 } catch (Exception ex) {
+                    log.error("Failed to import animal at row {}", parsedRow.getRowNumber(), ex);
                     success = false;
                     errors.add("Could not save this animal");
                     failed++;

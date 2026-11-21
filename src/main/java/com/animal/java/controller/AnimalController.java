@@ -11,6 +11,7 @@ import com.animal.java.service.AnimalIndexService;
 import com.animal.java.service.AnimalSearchService;
 import com.animal.java.service.AnimalService;
 import com.animal.java.service.ImageService;
+import com.animal.java.service.impl.AnimalBulkImportJobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.io.IOException;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,6 +33,7 @@ public class AnimalController {
     private final AnimalService animalService;
     private final ImageService imageService;
     private final AnimalBulkImportService animalBulkImportService;
+    private final AnimalBulkImportJobService animalBulkImportJobService;
     private final AnimalSearchService animalSearchService;
     private final AnimalIndexService animalIndexService;
 
@@ -146,8 +150,23 @@ public class AnimalController {
     }
 
     @PostMapping(value = "/admin/bulkImport", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> bulkImport(@RequestParam("file") MultipartFile file){
-        return ResponseEntity.ok(animalBulkImportService.importAnimals(file));
+    public ResponseEntity<?> bulkImport(@RequestParam("file") MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "A template file is required"));
+        }
+        try {
+            return ResponseEntity.accepted().body(
+                    animalBulkImportJobService.submit(file.getOriginalFilename(), file.getBytes()));
+        } catch (RejectedExecutionException ex) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .body(Map.of("error", "The import queue is full. Please try again later."));
+        }
+    }
+
+    @GetMapping("/admin/bulkImport/{id}")
+    public ResponseEntity<?> bulkImportStatus(@PathVariable UUID id) {
+        var job = animalBulkImportJobService.get(id);
+        return job == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(job);
     }
 
     @GetMapping("/admin/bulkTemplate")
