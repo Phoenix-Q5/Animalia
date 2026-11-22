@@ -36,6 +36,7 @@ public class AnimalBulkImportJobService {
     }
 
     public synchronized BulkImportJob submit(String filename, byte[] contents) {
+        log.info("Submitting bulk import job for file: {}", filename);
         cleanUp();
         UUID id = newID();
         JobState state = new JobState(new BulkImportJob(id, BulkImportJob.Status.QUEUED, null, null));

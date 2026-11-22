@@ -13,6 +13,7 @@ import com.animal.java.service.AnimalService;
 import com.animal.java.service.ImageService;
 import com.animal.java.service.impl.AnimalBulkImportJobService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/animals")
 @RequiredArgsConstructor
 @CrossOrigin("*")
+@Slf4j
 public class AnimalController {
 
     private final AnimalService animalService;
@@ -151,13 +153,17 @@ public class AnimalController {
 
     @PostMapping(value = "/admin/bulkImport", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> bulkImport(@RequestParam("file") MultipartFile file) throws IOException {
+        log.info("Received bulk import request for file: {}", file.getOriginalFilename());
         if (file.isEmpty()) {
+            log.error("Bulk import failed: No file provided");
             return ResponseEntity.badRequest().body(Map.of("error", "A template file is required"));
         }
         try {
+            log.info("Submitting bulk import job for file: {}", file.getOriginalFilename());
             return ResponseEntity.accepted().body(
                     animalBulkImportJobService.submit(file.getOriginalFilename(), file.getBytes()));
         } catch (RejectedExecutionException ex) {
+            log.error("Bulk import failed: The import queue is full. Please try again later.");
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                     .body(Map.of("error", "The import queue is full. Please try again later."));
         }
